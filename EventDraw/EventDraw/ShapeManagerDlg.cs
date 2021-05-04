@@ -21,19 +21,25 @@ namespace EventDraw
     {
         private Visio.Application appliction;
         private ShapeManager sManager;
+        private List<ShapeInDoc> _usedShape = new List<ShapeInDoc>();
 
         public ShapeManagerDlg(Visio.Application app, ShapeManager sM)
         {
             InitializeComponent();
+            this.axViewer1.CreateControl();
+
             this.appliction = app;
             this.sManager = sM;
-            this.sManager.saveXml();
+
+            sM.saveXml();
             LoadShapeFromActive();
         }
 
         private void btn_edit_model_Click(object sender, EventArgs e)
         {
-            EditModelDlg dlg = new EditModelDlg(this.sManager);
+            ShapeInDoc selectedModel = (ShapeInDoc)this.lbx_shapelist.SelectedItem;
+
+            EditModelDlg dlg = new EditModelDlg(this.sManager, selectedModel);
             dlg.ShowDialog();
         }
 
@@ -51,9 +57,12 @@ namespace EventDraw
                     s.setBaseID(shape.Master.BaseID);
                     s.setName(shape.Master.Name);
 
-                    this.lbx_shapelist.Items.Add(s);
+                    if (!this._usedShape.Contains(s))
+                        this._usedShape.Add(s);
                 }
             }
+
+            this.lbx_shapelist.DataSource = this._usedShape;
         }
         
         protected override void OnLoad(EventArgs e)
@@ -118,6 +127,19 @@ namespace EventDraw
         {
             ShapeInDoc value = (ShapeInDoc) this.lbx_shapelist.SelectedItem;
             this.tbx_baseID.Text = value.getBaseID();
+            this.DrawMaster();
+        }
+
+        private void DrawMaster()
+        {
+
+            //string sampleFileName = @"\\test\_temp.vsd";
+            //string samplefilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + sampleFileName;
+
+            //this.appliction.Documents.AddEx(samplefilePath);
+            
+            //this.appliction.Documents.
+            //this.axViewer1.Load(samplefilePath);
         }
     }
 }

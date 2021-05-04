@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShapeManagerDlg));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lbx_shapelist = new System.Windows.Forms.ListBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -35,7 +36,7 @@
             this.button4 = new System.Windows.Forms.Button();
             this.btn_edit_model = new System.Windows.Forms.Button();
             this.render_panel = new OpenTK.GLControl();
-            this.panel4 = new System.Windows.Forms.Panel();
+            this.axViewer1 = new AxVisioViewer.AxViewer();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbx_baseID = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
@@ -44,6 +45,7 @@
             this.groupBox1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.axViewer1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -74,7 +76,7 @@
             // 
             this.flowLayoutPanel1.Controls.Add(this.panel2);
             this.flowLayoutPanel1.Controls.Add(this.render_panel);
-            this.flowLayoutPanel1.Controls.Add(this.panel4);
+            this.flowLayoutPanel1.Controls.Add(this.axViewer1);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(410, 12);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(291, 441);
@@ -117,12 +119,15 @@
             this.render_panel.TabIndex = 1;
             this.render_panel.VSync = false;
             // 
-            // panel4
+            // axViewer1
             // 
-            this.panel4.Location = new System.Drawing.Point(3, 233);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(288, 205);
-            this.panel4.TabIndex = 2;
+            this.axViewer1.Enabled = true;
+            this.axViewer1.Location = new System.Drawing.Point(3, 233);
+            this.axViewer1.Name = "axViewer1";
+            this.axViewer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axViewer1.OcxState")));
+            this.axViewer1.Size = new System.Drawing.Size(285, 205);
+            this.axViewer1.TabIndex = 2;
+            this.axViewer1.TabStop = false;
             // 
             // panel1
             // 
@@ -182,6 +187,7 @@
             this.groupBox1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.axViewer1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -198,11 +204,11 @@
         private System.Windows.Forms.Button btn_edit_model;
         //private System.Windows.Forms.Panel render_panel;
         private OpenTK.GLControl render_panel;
-        private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox tbx_baseID;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label1;
+        private AxVisioViewer.AxViewer axViewer1;
     }
 }

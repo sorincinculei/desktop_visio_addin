@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace EventDraw
 {
-    public class ShapeInfo
+    public class ShapeInfo : IEquatable<ShapeInfo>
     {
+        [XmlElement("Id")]
         public string id;
+
+        [XmlElement("BaseId")]
         public string baseId;
+
         public string Id3D;
         public string Class;
         public MasterSize MasterSize;
@@ -16,7 +21,12 @@ namespace EventDraw
         public bool PutOnTable;
         public bool HangOnTable;
         public bool LinksToCenter;
-        public Model Model;
+
+        [XmlElement("Model")]
+        public Model model;
+
+        [XmlElement("ModelParams")]
+        public ModelParams modelParams;
 
         public ShapeInfo()
         {
@@ -29,7 +39,14 @@ namespace EventDraw
             this.HangOnTable = false;
             this.LinksToCenter = false;
             this.MasterSize = new MasterSize();
-            this.Model = new Model();
+            this.model = new Model();
+            this.modelParams = new ModelParams();
+        }
+
+        public bool Equals(ShapeInfo other)
+        {
+            if (baseId != other.baseId) return false;
+            return true;
         }
     }
 
@@ -61,9 +78,15 @@ namespace EventDraw
 
     public class ModelParams
     {
+        [XmlElement("Localtion")]
         public Location localtion;
+
+        [XmlElement("Angle")]
         public Angle angle;
+
+        [XmlElement("Scale")]
         public Scale scale;
+
         public float Height;
         public bool FlipXY;
         public bool ScaleHeight;
@@ -81,8 +104,13 @@ namespace EventDraw
 
     public class Location
     {
+        [XmlElement("X")]
         public float x;
+
+        [XmlElement("Y")]
         public float y;
+
+        [XmlElement("Z")]
         public float z;
 
         public Location()
@@ -95,8 +123,13 @@ namespace EventDraw
 
     public class Angle
     {
+        [XmlElement("X")]
         public float x;
+
+        [XmlElement("Y")]
         public float y;
+
+        [XmlElement("Z")]
         public float z;
 
         public Angle()
@@ -109,8 +142,13 @@ namespace EventDraw
 
     public class Scale
     {
+        [XmlElement("X")]
         public float x;
+
+        [XmlElement("Y")]
         public float y;
+
+        [XmlElement("Z")]
         public float z;
 
         public Scale()

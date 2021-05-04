@@ -15,13 +15,28 @@ namespace EventDraw
 {
     public partial class EditModelDlg : Form
     {
+        private string _baseId;
+        private ShapeInfo _modelInfo;
+
         private ShapeManager sManager;
 
-        public EditModelDlg(ShapeManager sM)
+        public EditModelDlg(ShapeManager sM, ShapeInDoc info)
         {
             InitializeComponent();
 
             this.sManager = sM;
+            this._baseId = info.BaseID;
+            this._modelInfo = sManager.getShapeInfo(this._baseId);
+
+            // Init Component
+            this.lbl_model_type.Text = info.getName();
+
+            this._modelInfo.baseId = this._baseId;
+
+            // Set Rotation
+            this.ipt_rotation_x.Value = (decimal) this._modelInfo.modelParams.angle.x;
+            this.ipt_rotation_y.Value = (decimal)this._modelInfo.modelParams.angle.y;
+            this.ipt_rotation_z.Value = (decimal)this._modelInfo.modelParams.angle.z;
         }
 
 
@@ -87,5 +102,55 @@ namespace EventDraw
 
             this.render_panel.SwapBuffers();
         }
+
+        private void btn_save_Click(object sender, EventArgs e)
+        {
+            this.sManager.saveShape(this._modelInfo);
+        }
+
+        private void btn_cancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        // Rotation
+        private void ipt_rotation_x_ValueChanged(object sender, EventArgs e)
+        {
+            _modelInfo.modelParams.angle.x = (float) ipt_rotation_x.Value;
+        }
+
+        private void ipt_rotation_y_ValueChanged(object sender, EventArgs e)
+        {
+            _modelInfo.modelParams.angle.y = (float)ipt_rotation_y.Value;
+        }
+
+        private void ipt_rotation_z_ValueChanged(object sender, EventArgs e)
+        {
+            _modelInfo.modelParams.angle.z = (float)ipt_rotation_z.Value;
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            float multiple = (float) ipt_multipler.Value;
+            ipt_scale_x.Value = (decimal)(_modelInfo.modelParams.scale.x * multiple);
+            ipt_scale_y.Value = (decimal)(_modelInfo.modelParams.scale.y * multiple);
+            ipt_scale_z.Value = (decimal)(_modelInfo.modelParams.scale.z * multiple);
+        }
+
+        private void ipt_scale_x_ValueChanged(object sender, EventArgs e)
+        {
+            _modelInfo.modelParams.scale.x = (float) ipt_scale_x.Value;
+        }
+
+        private void ipt_scale_y_ValueChanged(object sender, EventArgs e)
+        {
+            _modelInfo.modelParams.scale.y = (float) ipt_scale_y.Value;
+        }
+
+        private void ipt_scale_z_ValueChanged(object sender, EventArgs e)
+        {
+            _modelInfo.modelParams.scale.z = (float) ipt_scale_z.Value;
+        }
+
     }
 }

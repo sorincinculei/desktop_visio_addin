@@ -14,6 +14,7 @@ namespace EventDraw
         private string xmlFileName = @"\\shapes.xml";
 
         //private ShapeInDoc[] useShapes;
+        private ShapeTypes _shapetype;
 
         public ShapeManager()
         {
@@ -22,17 +23,10 @@ namespace EventDraw
         
         public void LoadXml()
         {
-            //string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + xmlFileName;
-            //XmlDocument xDoc = new XmlDocument();
-            //xDoc.LoadXml(path);
-
-            //XmlElement xRoot = xDoc.DocumentElement;
-
             string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + xmlFileName;
             XmlSerializer serializer = new XmlSerializer(typeof(ShapeTypes));
             FileStream fs = new FileStream(path, FileMode.Open);
-            ShapeTypes shapetype;
-            shapetype = (ShapeTypes)serializer.Deserialize(fs);
+            this._shapetype = (ShapeTypes)serializer.Deserialize(fs);
             fs.Close();
         }
 
@@ -41,10 +35,29 @@ namespace EventDraw
             string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + xmlFileName;
             XmlSerializer serializer = new XmlSerializer(typeof(ShapeTypes));
             TextWriter writer = new StreamWriter(path);
-            ShapeTypes shapetype = new ShapeTypes();
 
-            serializer.Serialize(writer, shapetype);
+            serializer.Serialize(writer, this._shapetype);
             writer.Close();
+        }
+
+        public ShapeInfo getShapeInfo(string baseId)
+        {
+            List<ShapeInfo> shapeInfos = this._shapetype._shapeInfos;
+            foreach (ShapeInfo s in shapeInfos)
+            {
+                if (s.baseId == baseId)
+                {
+                    return s;
+                }
+            }
+
+            return new ShapeInfo();
+        }
+
+        public void saveShape(ShapeInfo newS)
+        {
+            this._shapetype.addShapeInfo(newS);
+            this.saveXml();
         }
     }
 }
