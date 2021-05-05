@@ -22,6 +22,16 @@ namespace EventDraw
         private Visio.Application appliction;
         private ShapeManager sManager;
         private List<ShapeInDoc> _usedShape = new List<ShapeInDoc>();
+        private InputHandler inputHandler;
+
+        Mesh _mesh = null;
+        private bool mouseLeftDown = false;
+
+        private int mouseLastX = -1;
+        private int mouseLastY = -1;
+        private float scale = 1f;
+
+        private List<Rotation> rotations;
 
         public ShapeManagerDlg(Visio.Application app, ShapeManager sM)
         {
@@ -33,6 +43,44 @@ namespace EventDraw
 
             sM.saveXml();
             LoadShapeFromActive();
+
+            inputHandler = new InputHandler(render_panel);
+            inputHandler.mouseDownListeners.Add(MouseButtons.Left, (x, y) => mouseLeftDown = true);
+            inputHandler.mouseUpListeners.Add(MouseButtons.Left, (x, y) => mouseLeftDown = false);
+
+            inputHandler.mouseMoved += (int x, int y) =>
+            {
+                if (mouseLastX != -1 && mouseLastY != -1)
+                {
+                    if(mouseLeftDown)
+                    {
+                        int moveX = x - mouseLastX;
+                        int moveY = y - mouseLastY;
+
+                        float mag = (float)Math.Sqrt(moveX * moveX + moveY * moveY) / 2f;
+
+                        // vector (x, y) perpendicular to another vector is (y, x)
+                        rotations.Add(new Rotation(-mag, -moveY, -moveX, 0));
+
+                        render_panel.Invalidate();
+                    }
+                }
+
+                mouseLastX = x;
+                mouseLastY = y;
+            };
+
+            inputHandler.mouseWheelMoved += (int delta) =>
+            {
+                scale += delta / SystemInformation.MouseWheelScrollDelta * 0.01f;
+
+                // keep scale between 0.1 - 10
+                scale = Math.Min(10f, Math.Max(0.01f, scale));
+
+                render_panel.Invalidate();
+            };
+
+            rotations = new List<Rotation>();
         }
 
         private void btn_edit_model_Click(object sender, EventArgs e)
@@ -110,15 +158,49 @@ namespace EventDraw
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            GL.Begin(BeginMode.Quads);
+            GL.Scale(scale, scale, 1);
+            GL.Translate(0, 0, scale);
 
-            GL.Color4(Color4.Silver);
-            GL.Vertex3(-1.0f, -1.0f, -1.0f);
-            GL.Vertex3(-1.0f, 1.0f, -1.0f);
-            GL.Vertex3(1.0f, 1.0f, -1.0f);
-            GL.Vertex3(1.0f, -1.0f, -1.0f);
+            foreach (Rotation rot in rotations)
+            {
+                GL.Rotate(rot.angle, rot.axis);
+            }
 
-            GL.End();
+            GL.EnableClientState(ArrayCap.VertexArray);
+
+            // GL.Color4(Color4.Silver);
+            // GL.Vertex3(-1.0f, -1.0f, -1.0f);
+            // GL.Vertex3(-1.0f, 1.0f, -1.0f);
+            // GL.Vertex3(1.0f, 1.0f, -1.0f);
+            // GL.Vertex3(1.0f, -1.0f, -1.0f);
+            if (_mesh != null)
+            {
+                var meshVertices = _mesh.vertices.ToArray();
+                GL.VertexPointer(3, VertexPointerType.Float, 0, meshVertices);
+                GL.Color4(0.5f, 0.5f, 0.5f, 0.5f);
+
+                var meshVertexIndices = _mesh.vertexIndices.ToArray();
+                GL.DrawElements(PrimitiveType.Triangles, _mesh.vertexIndices.Count, DrawElementsType.UnsignedInt, meshVertexIndices);
+
+                var bbVertices = _mesh.boundingBox.vertices.ToArray();
+                GL.VertexPointer(3, VertexPointerType.Float, 0, bbVertices);
+                GL.Color4(BoundingBox.drawColor);
+
+                var bbVertexIndices = _mesh.vertexIndices.ToArray();
+                GL.DrawElements(PrimitiveType.Lines, _mesh.boundingBox.indices.Count, DrawElementsType.UnsignedInt, bbVertexIndices);
+
+                GL.DisableClientState(ArrayCap.VertexArray);
+
+                /*
+                  GL.Begin(BeginMode.Quads);
+                 GL.Color4(Color4.Silver);
+                 GL.Vertex3(-1.0f, -1.0f, -1.0f);
+                 GL.Vertex3(-1.0f, 1.0f, -1.0f);
+                 GL.Vertex3(1.0f, 1.0f, -1.0f);
+                 GL.Vertex3(1.0f, -1.0f, -1.0f);
+                 GL.End();
+                 */
+            }
 
             this.render_panel.SwapBuffers();
         }
@@ -128,6 +210,7 @@ namespace EventDraw
             ShapeInDoc value = (ShapeInDoc) this.lbx_shapelist.SelectedItem;
             this.tbx_baseID.Text = value.getBaseID();
             this.DrawMaster();
+            this.Draw3DModel();
         }
 
         private void DrawMaster()
@@ -140,6 +223,14 @@ namespace EventDraw
             
             //this.appliction.Documents.
             //this.axViewer1.Load(samplefilePath);
+        }
+
+        private void Draw3DModel()
+        {
+            string sampleFileName = @"\\cube.obj";
+            string samplefilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + sampleFileName;
+
+            float[] mesh1 = ObjLoader.Load(samplefilePath);
         }
     }
 }

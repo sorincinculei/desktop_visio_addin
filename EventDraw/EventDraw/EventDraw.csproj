@@ -134,12 +134,25 @@
     <None Include="Interop\Microsoft.Office.Interop.Visio.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="3d\Camera.cs" />
+    <Compile Include="3d\Engine.cs" />
+    <Compile Include="3d\InputHandler.cs" />
+    <Compile Include="3d\Lamp.cs" />
+    <Compile Include="3d\Object.cs" />
+    <Compile Include="3d\ObjLoader.cs" />
+    <Compile Include="3d\Shader.cs" />
+    <Compile Include="3d\Shaders.cs" />
+    <Compile Include="3d\TexturedObject.cs" />
+    <Compile Include="BoundingBox.cs" />
     <Compile Include="EditModelDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="EditModelDlg.Designer.cs">
       <DependentUpon>EditModelDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="InputHandler.cs" />
+    <Compile Include="Mesh.cs" />
+    <Compile Include="ObjLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderDlg.cs">
       <SubType>Form</SubType>
@@ -147,6 +160,7 @@
     <Compile Include="RenderDlg.Designer.cs">
       <DependentUpon>RenderDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Rotation.cs" />
     <Compile Include="SettingDlg.cs">
       <SubType>Form</SubType>
     </Compile>

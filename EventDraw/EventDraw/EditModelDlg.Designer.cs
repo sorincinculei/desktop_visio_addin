@@ -251,6 +251,7 @@
             this.btn_add_model.TabIndex = 1;
             this.btn_add_model.Text = "Add";
             this.btn_add_model.UseVisualStyleBackColor = true;
+            this.btn_add_model.Click += new System.EventHandler(this.btn_add_model_Click);
             // 
             // listBox1
             // 
