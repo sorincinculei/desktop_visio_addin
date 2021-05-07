@@ -38,6 +38,10 @@ namespace EventDraw
             this.ipt_rotation_x.Value = (decimal) this._modelInfo.modelParams.angle.x;
             this.ipt_rotation_y.Value = (decimal)this._modelInfo.modelParams.angle.y;
             this.ipt_rotation_z.Value = (decimal)this._modelInfo.modelParams.angle.z;
+
+            string[] stores = new string[]{"Building Plan", "Custom", "Network"};
+            cbx_model_path.Items.AddRange(stores);
+            cbx_model_path.SelectedIndex = 0;
         }
 
 
@@ -175,6 +179,25 @@ namespace EventDraw
                         fileContent = reader.ReadToEnd();
                     }
                 }
+            }
+        }
+
+        private void cbx_model_path_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+
+            string path = (string) comboBox.SelectedItem;
+   
+            string targetPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/EventDraw";
+            string destFile = System.IO.Path.Combine(targetPath, path);
+
+            System.IO.Directory.CreateDirectory(destFile);
+
+            lbx_model.Items.Clear();
+            string[] files = System.IO.Directory.GetFiles(destFile);
+            foreach(string sf in files)
+            {
+                lbx_model.Items.Add(System.IO.Path.GetFileNameWithoutExtension(sf));
             }
         }
     }

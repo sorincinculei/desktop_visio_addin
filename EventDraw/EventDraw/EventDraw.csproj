@@ -27,6 +27,8 @@
     <FriendlyName>EventDraw</FriendlyName>
     <OfficeApplicationDescription />
     <LoadBehavior>3</LoadBehavior>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup>
     <DefineConstants>VSTO40</DefineConstants>
@@ -83,6 +85,10 @@
     <ManifestCertificateThumbprint>7044F7104314FED0754098EA03F04ABBFDF72BFE</ManifestCertificateThumbprint>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="OpenTK, Version=3.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OpenTK.3.1.0\lib\net20\OpenTK.dll</HintPath>
       <Private>True</Private>
@@ -138,17 +144,25 @@
     <Compile Include="3d\Engine.cs" />
     <Compile Include="3d\InputHandler.cs" />
     <Compile Include="3d\Lamp.cs" />
+    <Compile Include="3d\Mesh.cs" />
     <Compile Include="3d\Object.cs" />
     <Compile Include="3d\ObjLoader.cs" />
     <Compile Include="3d\Shader.cs" />
     <Compile Include="3d\Shaders.cs" />
     <Compile Include="3d\TexturedObject.cs" />
+    <Compile Include="3d\Util.cs" />
     <Compile Include="BoundingBox.cs" />
     <Compile Include="EditModelDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="EditModelDlg.Designer.cs">
       <DependentUpon>EditModelDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImportDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportDlg.Designer.cs">
+      <DependentUpon>ImportDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="InputHandler.cs" />
     <Compile Include="Mesh.cs" />
@@ -202,6 +216,9 @@
     <EmbeddedResource Include="EditModelDlg.resx">
       <DependentUpon>EditModelDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ImportDlg.resx">
+      <DependentUpon>ImportDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -217,6 +234,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\NicePng_transportation-png_3349636.png" />
     <None Include="Resources\objects-icon.png" />
     <None Include="Resources\Settings-icon.png" />
     <None Include="Resources\3d-icon-12.jpg" />
@@ -276,6 +294,9 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Shaders\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -292,4 +313,11 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="..\..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\AssimpNet.4.1.0\build\AssimpNet.targets'))" />
+  </Target>
 </Project>

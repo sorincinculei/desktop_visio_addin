@@ -41,10 +41,10 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.cbx_model_path = new System.Windows.Forms.ComboBox();
             this.btn_remove_model = new System.Windows.Forms.Button();
             this.btn_add_model = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.lbx_model = new System.Windows.Forms.ListBox();
             this.panel4 = new System.Windows.Forms.Panel();
             this.lbl_model_type = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -215,10 +215,10 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.comboBox1);
+            this.groupBox1.Controls.Add(this.cbx_model_path);
             this.groupBox1.Controls.Add(this.btn_remove_model);
             this.groupBox1.Controls.Add(this.btn_add_model);
-            this.groupBox1.Controls.Add(this.listBox1);
+            this.groupBox1.Controls.Add(this.lbx_model);
             this.groupBox1.Location = new System.Drawing.Point(3, 147);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(262, 383);
@@ -226,13 +226,14 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "3D Models";
             // 
-            // comboBox1
+            // cbx_model_path
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(10, 356);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(242, 21);
-            this.comboBox1.TabIndex = 3;
+            this.cbx_model_path.FormattingEnabled = true;
+            this.cbx_model_path.Location = new System.Drawing.Point(10, 356);
+            this.cbx_model_path.Name = "cbx_model_path";
+            this.cbx_model_path.Size = new System.Drawing.Size(242, 21);
+            this.cbx_model_path.TabIndex = 3;
+            this.cbx_model_path.SelectedIndexChanged += new System.EventHandler(this.cbx_model_path_SelectedIndexChanged);
             // 
             // btn_remove_model
             // 
@@ -253,14 +254,14 @@
             this.btn_add_model.UseVisualStyleBackColor = true;
             this.btn_add_model.Click += new System.EventHandler(this.btn_add_model_Click);
             // 
-            // listBox1
+            // lbx_model
             // 
-            this.listBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(6, 19);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(246, 303);
-            this.listBox1.TabIndex = 0;
+            this.lbx_model.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lbx_model.FormattingEnabled = true;
+            this.lbx_model.Location = new System.Drawing.Point(6, 19);
+            this.lbx_model.Name = "lbx_model";
+            this.lbx_model.Size = new System.Drawing.Size(246, 303);
+            this.lbx_model.TabIndex = 0;
             // 
             // panel4
             // 
@@ -649,10 +650,10 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox cbx_model_path;
         private System.Windows.Forms.Button btn_remove_model;
         private System.Windows.Forms.Button btn_add_model;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox lbx_model;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Label lbl_model_type;
         private System.Windows.Forms.GroupBox groupBox2;

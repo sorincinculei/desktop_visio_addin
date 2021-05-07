@@ -33,6 +33,7 @@ namespace EventDraw._3d
             glControl.MouseDown += MouseDown;
             glControl.MouseUp += MouseUp;
             glControl.MouseMove += MouseMove;
+            glControl.MouseWheel += MouseWheel;
 
             mouseDownListeners = new Dictionary<MouseButtons, MousePressed>();
             mouseUpListeners = new Dictionary<MouseButtons, MousePressed>();
@@ -83,6 +84,14 @@ namespace EventDraw._3d
             if (mouseMoved.GetInvocationList().Length != 0)
             {
                 mouseMoved.Invoke(e.X, e.Y);
+            }
+        }
+
+        private void MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (mouseWheelMoved.GetInvocationList().Length != 0)
+            {
+                mouseWheelMoved.Invoke(e.Delta);
             }
         }
     }

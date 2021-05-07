@@ -6,44 +6,34 @@ using System.Text;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using Assimp;
 
 namespace EventDraw._3d
 {
     class TexturedObject
     {
-        private readonly float[] _vertices;
-        private readonly int _mainObject;
-        private readonly int _vertexBufferObject;
+        List<Mesh> mMesh = new List<Mesh>();
+
         private readonly Shader _shader;
 
         private Vector3 _pos;
         private float _rotX, _rotY, _rotZ;
 
+        private Scene m_model;
+        private Vector3 m_sceneMin, m_sceneMax;
+
         public TexturedObject(string path, Shader textureShader, string texturePath)
         {
-            _vertices = ObjLoader.LoadObjTextured(path);
+            m_model = ObjLoader.LoadObjTextured(path);
+            List<MeshInfo> infos = ObjLoader.analyzeModel(m_model);
 
-            _vertexBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices,
-                BufferUsageHint.StaticDraw);
+            foreach (MeshInfo m in infos)
+            {
+                Mesh mesh = new Mesh(m.vertices, m.indicate, textureShader, texturePath);
+                mMesh.Add(mesh);
+            }
 
-            _mainObject = GL.GenVertexArray();
-            GL.BindVertexArray(_mainObject);
-
-            var positionLocation = textureShader.GetAttribLocation("aPos");
-            GL.EnableVertexAttribArray(positionLocation);
-            GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 0);
-
-            var normalLocation = textureShader.GetAttribLocation("aNormal");
-            GL.EnableVertexAttribArray(normalLocation);
-            GL.VertexAttribPointer(normalLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float),
-                3 * sizeof(float));
-
-            var textureLocation = textureShader.GetAttribLocation("aTexture");
-            GL.EnableVertexAttribArray(textureLocation);
-            GL.VertexAttribPointer(textureLocation, 2, VertexAttribPointerType.Float, false, 8 * sizeof(float),
-                6 * sizeof(float));
+            ComputeBoundingBox();
 
             _rotX = 0.0f;
             _rotY = 0.0f;
@@ -54,40 +44,67 @@ namespace EventDraw._3d
 
         public void Show(Camera camera)
         {
-            _shader.SetMatrix4("model",
-                Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationX(_rotY) * Matrix4.CreateRotationZ(_rotZ) *
-                Matrix4.CreateTranslation(_pos));
-
-            _shader.SetMatrix4("view", camera.GetViewMatrix());
-            _shader.SetMatrix4("projection", camera.GetProjectionMatrix());
-
-            GL.DrawArrays(PrimitiveType.Triangles, 0, _vertices.Length / 8);
+            foreach(Mesh m in mMesh)
+            {
+                m.Show(camera);
+            }
         }
 
-        public void SetRotationX(float angle)
+        private void ComputeBoundingBox()
         {
-            _rotX = angle;
+            m_sceneMin = new Vector3(1e10f, 1e10f, 1e10f);
+            m_sceneMax = new Vector3(-1e10f, -1e10f, -1e10f);
+            Matrix4 identity = Matrix4.Identity;
+
+            ComputeBoundingBox(m_model.RootNode, ref m_sceneMin, ref m_sceneMax, ref identity);
+            
+            /*
+            m_sceneCenter.X = (m_sceneMin.X + m_sceneMax.X) / 2.0f;
+            m_sceneCenter.Y = (m_sceneMin.Y + m_sceneMax.Y) / 2.0f;
+            m_sceneCenter.Z = (m_sceneMin.Z + m_sceneMax.Z) / 2.0f;
+            */
         }
 
-        public void SetRotationY(float angle)
+        private void ComputeBoundingBox(Node node, ref Vector3 min, ref Vector3 max, ref Matrix4 trafo)
         {
-            _rotY = angle;
-        }
+            Matrix4 prev = trafo;
+            trafo = Matrix4.Mult(prev, Util.FromMatrix(node.Transform));
 
-        public void SetRotationZ(float angle)
-        {
-            _rotZ = angle;
-        }
+            if (node.HasMeshes)
+            {
+                foreach (int index in node.MeshIndices)
+                {
+                    Assimp.Mesh mesh = m_model.Meshes[index];
+                    for (int i = 0; i < mesh.VertexCount; i++)
+                    {
+                        /*
+                        Vector3 tmp = Util.FromVector(mesh.Vertices[i]);
+                        //Vector3.Transform(ref tmp, ref trafo, out tmp);
+                        min.X = Math.Min(min.X, tmp.X);
+                        min.Y = Math.Min(min.Y, tmp.Y);
+                        min.Z = Math.Min(min.Z, tmp.Z);
 
-        public void SetPositionInSpace(float x, float y, float z)
-        {
-            _pos = new Vector3(x, y, z);
+                        max.X = Math.Max(max.X, tmp.X);
+                        max.Y = Math.Max(max.Y, tmp.Y);
+                        max.Z = Math.Max(max.Z, tmp.Z);
+                        */
+                    }
+                }
+            }
+
+            for (int i = 0; i < node.ChildCount; i++)
+            {
+                ComputeBoundingBox(node.Children[i], ref min, ref max, ref trafo);
+            }
+            trafo = prev;
         }
 
         public void Dispose()
         {
-            GL.DeleteBuffer(_vertexBufferObject);
-            GL.DeleteVertexArray(_mainObject);
+            foreach (Mesh m in mMesh)
+            {
+                m.Dispose();
+            }
         }
     }
 }

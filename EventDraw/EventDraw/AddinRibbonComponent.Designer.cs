@@ -38,10 +38,12 @@
             this.group1 = this.Factory.CreateRibbonGroup();
             this.group4 = this.Factory.CreateRibbonGroup();
             this.group3 = this.Factory.CreateRibbonGroup();
-            this.group2 = this.Factory.CreateRibbonGroup();
             this.group5 = this.Factory.CreateRibbonGroup();
+            this.group2 = this.Factory.CreateRibbonGroup();
+            this.group6 = this.Factory.CreateRibbonGroup();
             this.btn_render = this.Factory.CreateRibbonButton();
             this.btn_shapeM = this.Factory.CreateRibbonButton();
+            this.button1 = this.Factory.CreateRibbonButton();
             this.btn_settings = this.Factory.CreateRibbonButton();
             this.btn_sample = this.Factory.CreateRibbonButton();
             this.btn_about = this.Factory.CreateRibbonButton();
@@ -49,14 +51,16 @@
             this.group1.SuspendLayout();
             this.group4.SuspendLayout();
             this.group3.SuspendLayout();
-            this.group2.SuspendLayout();
             this.group5.SuspendLayout();
+            this.group2.SuspendLayout();
+            this.group6.SuspendLayout();
             this.SuspendLayout();
             // 
             // tab1
             // 
             this.tab1.Groups.Add(this.group1);
             this.tab1.Groups.Add(this.group4);
+            this.tab1.Groups.Add(this.group6);
             this.tab1.Groups.Add(this.group3);
             this.tab1.Groups.Add(this.group5);
             this.tab1.Groups.Add(this.group2);
@@ -78,15 +82,20 @@
             this.group3.Items.Add(this.btn_settings);
             this.group3.Name = "group3";
             // 
+            // group5
+            // 
+            this.group5.Items.Add(this.btn_sample);
+            this.group5.Name = "group5";
+            // 
             // group2
             // 
             this.group2.Items.Add(this.btn_about);
             this.group2.Name = "group2";
             // 
-            // group5
+            // group6
             // 
-            this.group5.Items.Add(this.btn_sample);
-            this.group5.Name = "group5";
+            this.group6.Items.Add(this.button1);
+            this.group6.Name = "group6";
             // 
             // btn_render
             // 
@@ -105,6 +114,15 @@
             this.btn_shapeM.Name = "btn_shapeM";
             this.btn_shapeM.ShowImage = true;
             this.btn_shapeM.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.btn_shapeM_Click);
+            // 
+            // button1
+            // 
+            this.button1.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.button1.Image = global::EventDraw.Properties.Resources.NicePng_transportation_png_3349636;
+            this.button1.Label = "Import Model";
+            this.button1.Name = "button1";
+            this.button1.ShowImage = true;
+            this.button1.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.button1_Click);
             // 
             // btn_settings
             // 
@@ -146,10 +164,12 @@
             this.group4.PerformLayout();
             this.group3.ResumeLayout(false);
             this.group3.PerformLayout();
-            this.group2.ResumeLayout(false);
-            this.group2.PerformLayout();
             this.group5.ResumeLayout(false);
             this.group5.PerformLayout();
+            this.group2.ResumeLayout(false);
+            this.group2.PerformLayout();
+            this.group6.ResumeLayout(false);
+            this.group6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -167,6 +187,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btn_shapeM;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group5;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btn_sample;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup group6;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton button1;
     }
 
     partial class ThisRibbonCollection

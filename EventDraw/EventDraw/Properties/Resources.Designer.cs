@@ -113,6 +113,16 @@ namespace EventDraw.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap NicePng_transportation_png_3349636 {
+            get {
+                object obj = ResourceManager.GetObject("NicePng_transportation-png_3349636", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap objects_icon {
             get {
                 object obj = ResourceManager.GetObject("objects_icon", resourceCulture);

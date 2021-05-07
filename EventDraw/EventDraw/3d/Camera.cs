@@ -4,13 +4,16 @@ using System.Linq;
 using System.Text;
 
 using OpenTK;
+using System.Windows.Forms;
 
 namespace EventDraw._3d
 {
     public class Camera
     {
         private float _fov = MathHelper.PiOver2;
-        private Vector3 _front = -Vector3.UnitZ;
+        private Vector3 _front = new Vector3(0, 0, 0);
+
+        private float _distance = 80.00f;
         private float _pitch;
         private float _yaw = -MathHelper.PiOver2;
 
@@ -18,8 +21,10 @@ namespace EventDraw._3d
 
         public Camera(Vector3 position, float aspectRatio)
         {
-            Position = position;
+            //Position = position;
             AspectRatio = aspectRatio;
+
+            UpdateVectors();
         }
 
         public Vector3 Position { get; set; }
@@ -36,7 +41,7 @@ namespace EventDraw._3d
             }
             set
             {
-                var angle = MathHelper.Clamp(value, -89f, 89f);
+                var angle = MathHelper.Clamp(value, 0f, 89f);
                 _pitch = MathHelper.DegreesToRadians(angle);
                 UpdateVectors();
             }
@@ -70,7 +75,8 @@ namespace EventDraw._3d
 
         public Matrix4 GetViewMatrix()
         {
-            return Matrix4.LookAt(Position, Position + _front, Up);
+            //return Matrix4.LookAt(Position, Position + _front, Up);
+            return Matrix4.LookAt(Position, _front, new Vector3(0, 1, 0));
         }
 
         public Matrix4 GetProjectionMatrix()
@@ -80,14 +86,19 @@ namespace EventDraw._3d
 
         private void UpdateVectors()
         {
-            _front.X = (float)Math.Cos(_pitch) * (float)Math.Cos(_yaw);
-            _front.Y = (float)Math.Sin(_pitch);
-            _front.Z = (float)Math.Cos(_pitch) * (float)Math.Sin(_yaw);
+            //_front.X = (float)Math.Cos(_pitch) * (float)Math.Cos(_yaw);
+            //_front.Y = (float)Math.Sin(_pitch);
+            //_front.Z = (float)Math.Cos(_pitch) * (float)Math.Sin(_yaw);
 
-            _front = Vector3.Normalize(_front);
+            //_front = Vector3.Normalize(_front);
 
-            Right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
-            Up = Vector3.Normalize(Vector3.Cross(Right, _front));
+            float x = _distance * (float)Math.Sin(_pitch) * (float)Math.Cos(_yaw);
+            float y = _distance * (float)Math.Cos(_pitch);
+            float z = _distance * (float)Math.Sin(_pitch) * (float)Math.Sin(_yaw);
+
+            Position = new Vector3(x, y, z);
+            //Right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
+            //Up = Vector3.Normalize(Vector3.Cross(Right, _front));
         }
 
         public void Forward()
@@ -108,6 +119,15 @@ namespace EventDraw._3d
         public void LeftMove()
         {
             Position -= Right * _cameraSpeed;
+        }
+
+        public void Zoom(int delta)
+        {
+            _distance += delta / SystemInformation.MouseWheelScrollDelta * 10.00f;
+
+            // keep scale between 0.1 - 10
+            _distance = Math.Min(1300f, Math.Max(0.01f, _distance));
+            UpdateVectors();
         }
     }
 }

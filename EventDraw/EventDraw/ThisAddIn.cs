@@ -34,6 +34,12 @@ namespace EventDraw
             
         }
 
+        public void ImportModel()
+        {
+            ImportDlg dlg = new ImportDlg();
+            dlg.ShowDialog();
+        }
+
         public void OpenSample()
         {
             this.Application.ActiveDocument.Close();

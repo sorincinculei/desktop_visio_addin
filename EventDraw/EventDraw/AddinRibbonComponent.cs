@@ -30,5 +30,10 @@ namespace EventDraw
         {
             Globals.ThisAddIn.OpenSample();
         }
+
+        private void button1_Click(object sender, RibbonControlEventArgs e)
+        {
+            Globals.ThisAddIn.ImportModel();
+        }
     }
 }

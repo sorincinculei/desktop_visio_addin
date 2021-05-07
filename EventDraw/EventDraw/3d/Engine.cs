@@ -26,7 +26,7 @@ namespace EventDraw._3d
 
             //CreateCube(new Color4(1.0f, 0.0f, 0.0f, 1.0f), 3.0f, 2.0f, 1.0f);
             
-            string sampleFileName = @"\\1.8m x 1.6m Round Table Transparency.obj";
+            string sampleFileName = @"\\1.8m x 1.6m Round Table.obj";
             string samplefilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + sampleFileName;
             //OpenObj(samplefilePath, new Color4(1.0f, 1.0f, 1.0f, 1.0f));
             OpenTexturedObj(samplefilePath, samplefilePath);
@@ -42,7 +42,7 @@ namespace EventDraw._3d
             _lampShader.Use();
             _textureShader.Use();
 
-            _camera = new Camera(Vector3.UnitZ * 10, 100 / (float) 100);
+            _camera = new Camera(Vector3.UnitZ * 100, 100 / (float) 100);
         }
 
         protected void OnUnload()

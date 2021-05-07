@@ -68,6 +68,11 @@ namespace EventDraw
                 mouseLastY = y;
             };
 
+            inputHandler.mouseWheelMoved += (int delta) =>
+            {
+                _engine._camera.Zoom(delta);
+            };
+
             inputHandler.keyDownListeners.Add(Keys.W, (modifiy) => {
                 _engine._camera.Forward();
             });
@@ -91,7 +96,7 @@ namespace EventDraw
 
         private void loadScene()
         {
-            string sampleFileName = @"\\cube.obj";
+            string sampleFileName = @"\\1.8m x 1.6m Round Table.obj";
             string samplefilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + sampleFileName;
 
             float[] mesh1 = ObjLoader.Load(samplefilePath);
@@ -127,6 +132,20 @@ namespace EventDraw
             this.render_panel.SwapBuffers();
 
             this.render_panel.Invalidate();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Obj file (*.obj, *.mtl)|*.obj; *.mtl|fbx files (*.fbx)|*.fbx|CAD files (*.dae)|*.dae";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    var filePath = openFileDialog.FileName;
+                    _engine.OpenTexturedObj(filePath, filePath);
+                }
+            }
         }
     }
 }
