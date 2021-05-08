@@ -262,6 +262,7 @@
             this.lbx_model.Name = "lbx_model";
             this.lbx_model.Size = new System.Drawing.Size(246, 303);
             this.lbx_model.TabIndex = 0;
+            this.lbx_model.SelectedIndexChanged += new System.EventHandler(this.lbx_model_SelectedIndexChanged);
             // 
             // panel4
             // 

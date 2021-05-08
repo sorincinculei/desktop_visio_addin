@@ -6,6 +6,8 @@ namespace EventDraw
 {
     public partial class ThisAddIn
     {
+        public string RootPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\EventDraw";
+
         private ShapeManager sManager;
 
         /// <summary>
@@ -13,7 +15,7 @@ namespace EventDraw
         /// </summary>
         public void Render()
         {
-            RenderDlg dlg = new RenderDlg();
+            RenderDlg dlg = new RenderDlg(this.Application);
             dlg.ShowDialog();
         }
 

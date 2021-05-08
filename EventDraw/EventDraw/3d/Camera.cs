@@ -28,8 +28,29 @@ namespace EventDraw._3d
         }
 
         public Vector3 Position { get; set; }
-        private float AspectRatio { get; }
-        public Vector3 Front => _front;
+        private float AspectRatio { get; set; }
+        public Vector3 Front {
+            get
+            {
+                return _front;
+            }
+            set
+            {
+                _front = value;
+            }
+        }
+        public float Distance
+        {
+            get
+            {
+                return _distance;
+            }
+            set
+            {
+                _distance = value;
+            }
+        }
+
         public Vector3 Up { get; private set; } = Vector3.UnitY;
         public Vector3 Right { get; private set; } = Vector3.UnitX;
 
@@ -97,6 +118,7 @@ namespace EventDraw._3d
             float z = _distance * (float)Math.Sin(_pitch) * (float)Math.Sin(_yaw);
 
             Position = new Vector3(x, y, z);
+            Position += Front;
             //Right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
             //Up = Vector3.Normalize(Vector3.Cross(Right, _front));
         }
@@ -126,7 +148,7 @@ namespace EventDraw._3d
             _distance += delta / SystemInformation.MouseWheelScrollDelta * 10.00f;
 
             // keep scale between 0.1 - 10
-            _distance = Math.Min(1300f, Math.Max(0.01f, _distance));
+            _distance = Math.Min(_distance * 10.0f, Math.Max(0.01f, _distance));
             UpdateVectors();
         }
     }

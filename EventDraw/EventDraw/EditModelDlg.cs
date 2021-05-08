@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 using OpenTK;
@@ -12,14 +7,25 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
 
+using EventDraw._3d;
+
 namespace EventDraw
 {
     public partial class EditModelDlg : Form
     {
         private string _baseId;
-        private ShapeInfo _modelInfo;
 
+        private ShapeInfo _modelInfo;
         private ShapeManager sManager;
+
+        // 3D variables
+        private Engine _engine;
+
+        private EventDraw._3d.InputHandler inputHandler;
+        private bool mouseLeftDown = false;
+        private int mouseLastX = -1;
+        private int mouseLastY = -1;
+        private readonly float _sensitivity = 0.2f;
 
         public EditModelDlg(ShapeManager sM, ShapeInDoc info)
         {
@@ -29,88 +35,143 @@ namespace EventDraw
             this._baseId = info.BaseID;
             this._modelInfo = sManager.getShapeInfo(this._baseId);
 
+            this._modelInfo.baseId = this._baseId;
+
+            cbx_model_path.Items.Add(new Store("Building Plan", "Building Plan", false));
+            cbx_model_path.Items.Add(new Store("Custom", "Custom", false));
+            cbx_model_path.Items.Add(new Store("Network", "Network", true));
+
+            cbx_model_path.SelectedIndex = 0;
+
+            btn_add_model.Enabled = false;
+            btn_remove_model.Enabled = false;
+
+            InitialValues(info);
+        }
+
+        private void InitialValues(ShapeInDoc info)
+        {
             // Init Component
             this.lbl_model_type.Text = info.getName();
 
-            this._modelInfo.baseId = this._baseId;
-
             // Set Rotation
-            this.ipt_rotation_x.Value = (decimal) this._modelInfo.modelParams.angle.x;
+            this.ipt_rotation_x.Value = (decimal)this._modelInfo.modelParams.angle.x;
             this.ipt_rotation_y.Value = (decimal)this._modelInfo.modelParams.angle.y;
             this.ipt_rotation_z.Value = (decimal)this._modelInfo.modelParams.angle.z;
-
-            string[] stores = new string[]{"Building Plan", "Custom", "Network"};
-            cbx_model_path.Items.AddRange(stores);
-            cbx_model_path.SelectedIndex = 0;
         }
-
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            _engine = new Engine();
 
             this.render_panel.Load += Render_panel_Load;
             this.render_panel.Resize += Render_panel_Resize;
             this.render_panel.Paint += Render_panel_Paint;
 
             Render_panel_Resize(this.render_panel, EventArgs.Empty);
+
+
+            inputHandler = new EventDraw._3d.InputHandler(render_panel);
+
+            inputHandler.mouseDownListeners.Add(MouseButtons.Left, (x, y) => mouseLeftDown = true);
+            inputHandler.mouseUpListeners.Add(MouseButtons.Left, (x, y) => mouseLeftDown = false);
+
+            inputHandler.mouseMoved += (int x, int y) =>
+            {
+                if (mouseLastX != -1 && mouseLastY != -1)
+                {
+                    if (mouseLeftDown)
+                    {
+                        int deltaX = x - mouseLastX;
+                        int deltaY = y - mouseLastY;
+
+                        _engine._camera.Yaw += deltaX * _sensitivity;
+                        _engine._camera.Pitch -= deltaY * _sensitivity;
+                    }
+                }
+
+                mouseLastX = x;
+                mouseLastY = y;
+
+                this.render_panel.Invalidate();
+            };
+
+            inputHandler.mouseWheelMoved += (int delta) =>
+            {
+                _engine._camera.Zoom(delta);
+
+                this.render_panel.Invalidate();
+            };
+
+            inputHandler.keyDownListeners.Add(Keys.W, (modifiy) => {
+                _engine._camera.Forward();
+
+                this.render_panel.Invalidate();
+            });
+
+            inputHandler.keyDownListeners.Add(Keys.S, (modifiy) => {
+                _engine._camera.Backwards();
+
+                this.render_panel.Invalidate();
+            });
+
+            inputHandler.keyDownListeners.Add(Keys.A, (modifiy) => {
+                _engine._camera.LeftMove();
+
+                this.render_panel.Invalidate();
+            });
+
+            inputHandler.keyDownListeners.Add(Keys.D, (modifiy) => {
+                _engine._camera.RightMove();
+
+                this.render_panel.Invalidate();
+            });
+
+
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            GL.Enable(EnableCap.Blend);
         }
 
         private void Render_panel_Load(object sender, EventArgs e)
         {
-            //GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             GL.ClearColor(Color.CornflowerBlue);
         }
 
         private void Render_panel_Resize(object sender, EventArgs e)
         {
             this.render_panel.MakeCurrent();
-            //GL.Viewport(0, 0, this.render_panel.ClientSize.Width, this.render_panel.ClientSize.Height);
-            //GL.MatrixMode(MatrixMode.Projection);
-            //GL.LoadIdentity();
-            //GL.Ortho(0, 50.0, 0, 50.0, -1.0, 1.0);
-            //GL.MatrixMode(MatrixMode.Modelview);
+
+            this.render_panel.MakeCurrent();
 
             if (this.render_panel.ClientSize.Height == 0)
                 this.render_panel.ClientSize = new System.Drawing.Size(this.render_panel.ClientSize.Width, 1);
             GL.Viewport(0, 0, this.render_panel.ClientSize.Width, this.render_panel.ClientSize.Height);
-
-            float aspect_ratio = Math.Max(this.render_panel.ClientSize.Width, 1) / (float)Math.Max(this.render_panel.ClientSize.Height, 1);
-            Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspect_ratio, 1, 64);
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref perspective);
         }
 
         private void Render_panel_Paint(object sender, PaintEventArgs e)
         {
             this.render_panel.MakeCurrent();
-
             GL.ClearColor(Color.CornflowerBlue);
-
-            GL.Enable(EnableCap.DepthTest);
-
-            Matrix4 lookat = Matrix4.LookAt(0, 5, 5, 0, 0, 0, 0, 1, 0);
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref lookat);
-
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            GL.Begin(BeginMode.Quads);
-
-            GL.Color4(Color4.Silver);
-            GL.Vertex3(-1.0f, -1.0f, -1.0f);
-            GL.Vertex3(-1.0f, 1.0f, -1.0f);
-            GL.Vertex3(1.0f, 1.0f, -1.0f);
-            GL.Vertex3(1.0f, -1.0f, -1.0f);
-
-            GL.End();
+            GL.Enable(EnableCap.DepthTest);
+            _engine.Render3DObjects();
+            GL.Disable(EnableCap.DepthTest);
 
             this.render_panel.SwapBuffers();
         }
 
         private void btn_save_Click(object sender, EventArgs e)
         {
-            this.sManager.saveShape(this._modelInfo);
+            FileStore selectedModel = (FileStore)lbx_model.SelectedItem;
+            if (selectedModel != null)
+            {
+                _modelInfo.model.fileName = selectedModel.path.Replace(Globals.ThisAddIn.RootPath + @"\", "");
+                _modelInfo.model.displayName = selectedModel.name;
+            }
+            sManager.saveShape(this._modelInfo);
         }
 
         private void btn_cancel_Click(object sender, EventArgs e)
@@ -186,19 +247,87 @@ namespace EventDraw
         {
             ComboBox comboBox = (ComboBox)sender;
 
-            string path = (string) comboBox.SelectedItem;
-   
-            string targetPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/EventDraw";
+            Store s = (Store) comboBox.SelectedItem;
+
+            string path = s.path;
+            bool canImport = s.canImport;
+
+            string targetPath = Globals.ThisAddIn.RootPath;
             string destFile = System.IO.Path.Combine(targetPath, path);
 
             System.IO.Directory.CreateDirectory(destFile);
 
             lbx_model.Items.Clear();
+
             string[] files = System.IO.Directory.GetFiles(destFile);
             foreach(string sf in files)
             {
-                lbx_model.Items.Add(System.IO.Path.GetFileNameWithoutExtension(sf));
+                lbx_model.Items.Add(new FileStore(System.IO.Path.GetFileNameWithoutExtension(sf), sf, System.IO.Path.GetExtension(sf)));
             }
+
+            btn_add_model.Enabled = canImport;
+            btn_remove_model.Enabled = canImport;
+        }
+
+        private void lbx_model_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            FileStore selectedModel = (FileStore)lbx_model.SelectedItem;
+
+            string filePath = selectedModel.path;
+            _engine.Clear();
+            _engine.OpenTexturedObj(filePath, filePath);
+        }
+    }
+
+    public class FileStore : IEquatable<FileStore>
+    {
+        public string name;
+        public string path;
+        public string extension;
+
+        public FileStore(string pName, string pPath, string pExtension)
+        {
+            name = pName;
+            path = pPath;
+            extension = pExtension;
+        }
+
+        public override string ToString()
+        {
+            return this.name;
+        }
+
+        public bool Equals(FileStore other)
+        {
+            if (other == null) return false;
+            return true;
+        }
+    }
+
+    public class Store : IEquatable<Store>
+    {
+        public string name;
+        public string path;
+        public bool canImport;
+
+        public Store(string pName, string pPath, bool pCanImport)
+        {
+            name = pName;
+            path = pPath;
+            canImport = pCanImport;
+        }
+
+        public override string ToString()
+        {
+            return this.name;
+        }
+
+        public bool Equals(Store other)
+        {
+            if (other == null) return false;
+            if (name != other.name) return false;
+            if (path != other.path) return false;
+            return true;
         }
     }
 }

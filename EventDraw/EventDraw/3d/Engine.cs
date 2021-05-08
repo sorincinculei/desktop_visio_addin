@@ -57,6 +57,15 @@ namespace EventDraw._3d
             foreach (var obj in _mainTexturedObjects) obj.Show(_camera);
         }
 
+        public void Clear()
+        {
+            foreach (var obj in _mainObjects) obj.Dispose();
+            foreach (var obj in _mainTexturedObjects) obj.Dispose();
+
+            _mainObjects.Clear();
+            _mainTexturedObjects.Clear();
+        }
+
         public void RenderLight()
         {
 
@@ -102,9 +111,20 @@ namespace EventDraw._3d
             _mainObjects.Add(new Object(obj, _lightingShader, _mainLamp, color));
         }
 
-        public void OpenTexturedObj(string obj, string texture)
+        public int OpenTexturedObj(string obj, string texture)
         {
             _mainTexturedObjects.Add(new TexturedObject(obj, _textureShader, texture));
+            return _mainTexturedObjects.Count - 1;
+        }
+
+        public void setPostiion(float x, float y, float z, int handle)
+        {
+            _mainTexturedObjects[handle].setPostion(x, y, z);
+        }
+
+        public void setScale(float scale, int handle)
+        {
+            _mainTexturedObjects[handle].setScale(scale);
         }
 
         private static float[] CreateRectangularPrismVertices(float width, float height, float depth)

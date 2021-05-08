@@ -12,6 +12,8 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using EventDraw._3d;
 
+using Visio = Microsoft.Office.Interop.Visio;
+
 namespace EventDraw
 {
     
@@ -26,9 +28,13 @@ namespace EventDraw
 
         private readonly float _sensitivity = 0.2f;
 
-        public RenderDlg()
+        private Visio.Application appliction;
+        
+        public RenderDlg(Visio.Application app)
         {
             InitializeComponent();
+
+            appliction = app;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -96,11 +102,36 @@ namespace EventDraw
 
         private void loadScene()
         {
-            string sampleFileName = @"\\1.8m x 1.6m Round Table.obj";
-            string samplefilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + sampleFileName;
+            Visio.Documents visioDocs = this.appliction.Documents;
+            var page = visioDocs.Application.ActivePage;
 
-            float[] mesh1 = ObjLoader.Load(samplefilePath);
+            double tx = page.PageSheet.Cells["PageWidth"].Result[Visio.VisUnitCodes.visCentimeters];
+            double ty = page.PageSheet.Cells["PageHeight"].Result[Visio.VisUnitCodes.visCentimeters];
 
+            //pageSheet.Cells["PrintPageOrientation"].FormulaU = "2";
+
+            _engine._camera.Front = new Vector3((float) tx / 2.0f, 0.0f, (float)ty / 2.0f);
+            _engine._camera.Distance = (float)Math.Max(tx, ty);
+
+            var shapes = page.Shapes;
+            foreach (Visio.Shape shape in shapes)
+            {
+                if (shape.Master != null)
+                {
+
+                    double width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                    double height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                    double x = shape.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
+                    double y = shape.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
+
+                    string baseId = shape.Master.BaseID;
+
+                    string filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, @"Custom\1.8m x 1.6m Round Table.obj");
+                    int handle = _engine.OpenTexturedObj(filePath, filePath);
+                    _engine.setPostiion((float) x, 0.0f, (float)y, handle);
+                }
+
+            }
         }
 
         private void Render_panel_Load(object sender, EventArgs e)

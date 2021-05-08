@@ -106,5 +106,21 @@ namespace EventDraw._3d
                 m.Dispose();
             }
         }
+
+        public void setPostion(float x, float y, float z)
+        {
+            foreach (Mesh m in mMesh)
+            {
+                m.SetPositionInSpace(x, y, z);
+            }
+        }
+
+        public void setScale(float scale)
+        {
+            foreach (Mesh m in mMesh)
+            {
+                m.setScale(scale);
+            }
+        }
     }
 }

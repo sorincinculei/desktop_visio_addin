@@ -100,6 +100,11 @@ namespace EventDraw._3d
             _pos = new Vector3(x, y, z);
         }
 
+        public void setScale(float scale)
+        {
+
+        }
+
         public void Dispose()
         {
             GL.DeleteBuffer(_vertexBufferObject);
