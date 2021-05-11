@@ -23,7 +23,7 @@ namespace EventDraw
         
         public void LoadXml()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + xmlFileName;
+            string path = Globals.ThisAddIn.RootPath + xmlFileName;
             XmlSerializer serializer = new XmlSerializer(typeof(ShapeTypes));
             FileStream fs = new FileStream(path, FileMode.Open);
             this._shapetype = (ShapeTypes)serializer.Deserialize(fs);
@@ -32,7 +32,7 @@ namespace EventDraw
 
         public void saveXml()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + xmlFileName;
+            string path = Globals.ThisAddIn.RootPath + xmlFileName;
             XmlSerializer serializer = new XmlSerializer(typeof(ShapeTypes));
             TextWriter writer = new StreamWriter(path);
 

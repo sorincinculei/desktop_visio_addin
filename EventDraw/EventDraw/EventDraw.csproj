@@ -144,11 +144,13 @@
     <Compile Include="3d\Engine.cs" />
     <Compile Include="3d\InputHandler.cs" />
     <Compile Include="3d\Lamp.cs" />
+    <Compile Include="3d\Material.cs" />
     <Compile Include="3d\Mesh.cs" />
     <Compile Include="3d\Object.cs" />
     <Compile Include="3d\ObjLoader.cs" />
     <Compile Include="3d\Shader.cs" />
     <Compile Include="3d\Shaders.cs" />
+    <Compile Include="3d\Texture.cs" />
     <Compile Include="3d\TexturedObject.cs" />
     <Compile Include="3d\Util.cs" />
     <Compile Include="BoundingBox.cs" />
@@ -267,15 +269,6 @@
       <Isolated>False</Isolated>
     </COMReference>
     <COMReference Include="stdole1">
-      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>primary</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="stdole2">
       <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
       <VersionMajor>2</VersionMajor>
       <VersionMinor>0</VersionMinor>

@@ -22,7 +22,12 @@ namespace EventDraw._3d
         {
             AssimpContext importer = new AssimpContext();
             Scene model = importer.ImportFile(path, PostProcessPreset.TargetRealTimeMaximumQuality);
-            
+
+            if (!importer.IsImportFormatSupported(Path.GetExtension(path)))
+            {
+                throw new ArgumentException("Model format " + Path.GetExtension(path) + " is not supported!  Cannot load {1}", "filename");
+            }
+
             return model;
         }
 

@@ -22,6 +22,8 @@ namespace EventDraw._3d
         private Scene m_model;
         private Vector3 m_sceneMin, m_sceneMax;
 
+        private Vector3 _offset;
+
         public TexturedObject(string path, Shader textureShader, string texturePath)
         {
             m_model = ObjLoader.LoadObjTextured(path);
@@ -39,6 +41,7 @@ namespace EventDraw._3d
             _rotY = 0.0f;
             _rotZ = 0.0f;
             _pos = new Vector3(0.0f, 0.0f, 0.0f);
+            _offset = new Vector3(0.0f, 0.0f, 0.0f);
             _shader = textureShader;
         }
 
@@ -57,17 +60,18 @@ namespace EventDraw._3d
             Matrix4 identity = Matrix4.Identity;
 
             ComputeBoundingBox(m_model.RootNode, ref m_sceneMin, ref m_sceneMax, ref identity);
-            
-            /*
-            m_sceneCenter.X = (m_sceneMin.X + m_sceneMax.X) / 2.0f;
-            m_sceneCenter.Y = (m_sceneMin.Y + m_sceneMax.Y) / 2.0f;
-            m_sceneCenter.Z = (m_sceneMin.Z + m_sceneMax.Z) / 2.0f;
-            */
+
+            _offset.X = (m_sceneMin.X + m_sceneMax.X) / 2.0f;
+            _offset.Y = (m_sceneMin.Y + m_sceneMax.Y) / 2.0f;
+            _offset.Z = (m_sceneMin.Z + m_sceneMax.Z) / 2.0f;
+
+            setPostion(0.0f, 0.0f, 0.0f);
         }
 
         private void ComputeBoundingBox(Node node, ref Vector3 min, ref Vector3 max, ref Matrix4 trafo)
         {
             Matrix4 prev = trafo;
+
             trafo = Matrix4.Mult(prev, Util.FromMatrix(node.Transform));
 
             if (node.HasMeshes)
@@ -77,9 +81,9 @@ namespace EventDraw._3d
                     Assimp.Mesh mesh = m_model.Meshes[index];
                     for (int i = 0; i < mesh.VertexCount; i++)
                     {
-                        /*
                         Vector3 tmp = Util.FromVector(mesh.Vertices[i]);
-                        //Vector3.Transform(ref tmp, ref trafo, out tmp);
+                        Vector3.TransformNormal(ref tmp, ref trafo, out tmp);
+                        
                         min.X = Math.Min(min.X, tmp.X);
                         min.Y = Math.Min(min.Y, tmp.Y);
                         min.Z = Math.Min(min.Z, tmp.Z);
@@ -87,7 +91,6 @@ namespace EventDraw._3d
                         max.X = Math.Max(max.X, tmp.X);
                         max.Y = Math.Max(max.Y, tmp.Y);
                         max.Z = Math.Max(max.Z, tmp.Z);
-                        */
                     }
                 }
             }
@@ -111,7 +114,7 @@ namespace EventDraw._3d
         {
             foreach (Mesh m in mMesh)
             {
-                m.SetPositionInSpace(x, y, z);
+                m.SetPositionInSpace(-_offset.X + x, -_offset.Y +  y, -_offset.Z +  z);
             }
         }
 

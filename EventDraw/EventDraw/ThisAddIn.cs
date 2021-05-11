@@ -15,7 +15,7 @@ namespace EventDraw
         /// </summary>
         public void Render()
         {
-            RenderDlg dlg = new RenderDlg(this.Application);
+            RenderDlg dlg = new RenderDlg(this.Application, this.sManager);
             dlg.ShowDialog();
         }
 
@@ -47,7 +47,7 @@ namespace EventDraw
             this.Application.ActiveDocument.Close();
 
             string sampleFileName = @"\\3D Marquee.vsd";
-            string samplefilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + sampleFileName;
+            string samplefilePath = RootPath + @"\sample" + sampleFileName;
             Visio.Documents visioDocs = this.Application.Documents;
             visioDocs.Open(samplefilePath);
         }

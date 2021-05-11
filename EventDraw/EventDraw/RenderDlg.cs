@@ -20,6 +20,8 @@ namespace EventDraw
     public partial class RenderDlg : Form
     {
         private Engine _engine;
+        private ShapeManager sManager;
+
         private EventDraw._3d.InputHandler inputHandler;
 
         private bool mouseLeftDown = false;
@@ -30,11 +32,12 @@ namespace EventDraw
 
         private Visio.Application appliction;
         
-        public RenderDlg(Visio.Application app)
+        public RenderDlg(Visio.Application app, ShapeManager sM)
         {
             InitializeComponent();
 
             appliction = app;
+            this.sManager = sM;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -126,11 +129,21 @@ namespace EventDraw
 
                     string baseId = shape.Master.BaseID;
 
-                    string filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, @"Custom\1.8m x 1.6m Round Table.obj");
-                    int handle = _engine.OpenTexturedObj(filePath, filePath);
-                    _engine.setPostiion((float) x, 0.0f, (float)y, handle);
-                }
+                    //string filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, @"Custom\1.8m x 1.6m Round Table.obj");
 
+                    ShapeInfo modelInfo = sManager.getShapeInfo(baseId);
+
+                    var modelPath = modelInfo.model.fileName;
+
+                    if (modelPath != "")
+                    {
+                        var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
+
+
+                        int handle = _engine.OpenTexturedObj(filePath, filePath);
+                        _engine.setPostiion((float) x, 0.0f, (float)y, handle);
+                    }
+                }
             }
         }
 

@@ -26,8 +26,8 @@ namespace EventDraw._3d
 
             //CreateCube(new Color4(1.0f, 0.0f, 0.0f, 1.0f), 3.0f, 2.0f, 1.0f);
             
-            string sampleFileName = @"\\1.8m x 1.6m Round Table.obj";
-            string samplefilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + sampleFileName;
+            string sampleFileName = @"\\3D_Man_Colour_1.obj";
+            string samplefilePath = Globals.ThisAddIn.RootPath + @"\Custom" + sampleFileName;
             //OpenObj(samplefilePath, new Color4(1.0f, 1.0f, 1.0f, 1.0f));
             OpenTexturedObj(samplefilePath, samplefilePath);
         }
