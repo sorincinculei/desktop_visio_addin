@@ -7,6 +7,7 @@ using System.IO;
 using OpenTK;
 
 using Assimp;
+using OpenTK.Graphics;
 
 namespace EventDraw._3d
 {
@@ -14,6 +15,10 @@ namespace EventDraw._3d
     {
         public float[] vertices;
         public int[] indicate;
+        public Color4 diffuseC;
+        public Color4 ambientC;
+        public Color4 specularC;
+        public Color4 emissiveC;
     }
 
     class ObjLoader
@@ -36,7 +41,7 @@ namespace EventDraw._3d
 
             List<MeshInfo> result = new List<MeshInfo>();
 
-            var mat = model.Materials;
+            var mats = model.Materials;
 
             for (int j = 0; j < model.MeshCount; j++)
             {
@@ -45,6 +50,32 @@ namespace EventDraw._3d
                 int[] fIndices = new int[0];
 
                 Assimp.Mesh m = model.Meshes[j];
+                Assimp.Material mat = mats[m.MaterialIndex];
+
+                Color4 diffuseC = new Color4(.2f, .2f, .2f, 1.0f);
+                if (mat.HasColorDiffuse)
+                {
+                    diffuseC = Util.FromColor(mat.ColorDiffuse);
+                }
+
+                Color4 ambientC = new Color4(.2f, .2f, .2f, 1.0f);
+                if (mat.HasColorAmbient)
+                {
+                    ambientC = Util.FromColor(mat.ColorAmbient);
+                }
+
+                Color4 specularC = new Color4(0, 0, 0, 1.0f);
+                if (mat.HasColorSpecular)
+                {
+                    specularC = Util.FromColor(mat.ColorSpecular);
+                }
+
+                Color4 emissiveC = new Color4(0, 0, 0, 1.0f);
+                if (mat.HasColorEmissive)
+                {
+                    emissiveC = Util.FromColor(mat.ColorEmissive);
+                }
+
                 Vector3[] positions = new Vector3[m.VertexCount];
                 Vector2[] textureCoords = new Vector2[m.VertexCount];
                 Vector3[] normals = new Vector3[m.VertexCount];
@@ -83,6 +114,11 @@ namespace EventDraw._3d
                 int[] indices = m.GetIndices();
                 mInfo.vertices = fVertices.ToArray();
                 mInfo.indicate = indices;
+                mInfo.diffuseC = diffuseC;
+                mInfo.ambientC = ambientC;
+                mInfo.specularC = specularC;
+                mInfo.emissiveC = emissiveC;
+
                 result.Add(mInfo);
             }
 

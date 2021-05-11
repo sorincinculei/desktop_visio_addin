@@ -48,14 +48,21 @@ namespace EventDraw
 
             string sampleFileName = @"\\3D Marquee.vsd";
             string samplefilePath = RootPath + @"\sample" + sampleFileName;
-            Visio.Documents visioDocs = this.Application.Documents;
-            visioDocs.Open(samplefilePath);
+
+            if (System.IO.File.Exists(samplefilePath))
+            {
+                Visio.Documents visioDocs = this.Application.Documents;
+                visioDocs.Open(samplefilePath);
+            }
         }
 
         private void ThisAddIn_Startup(object sender, EventArgs e)
         {
             LoadVSS();
             sManager = new ShapeManager();
+
+            //System.IO.Directory.CreateDirectory(RootPath);
+
         }
 
         private void ThisAddIn_Shutdown(object sender, EventArgs e)

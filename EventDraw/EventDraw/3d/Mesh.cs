@@ -27,10 +27,13 @@ namespace EventDraw._3d
         private Vector3 _pos;
         private float _rotX, _rotY, _rotZ;
 
-        public Mesh(float[] vertices, int[] indices, Shader textureShader, string texturePath)
+        private readonly Material _mat;
+
+        public Mesh(float[] vertices, int[] indices, Shader textureShader, string texturePath, Material mat)
         {
             _vertices = vertices;
             _indices = indices;
+            _mat = mat;
 
             _vertexBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
@@ -65,7 +68,7 @@ namespace EventDraw._3d
             _shader = textureShader;
         }
 
-        public void Show(Camera camera)
+        public void Show(Camera camera, Lamp _lamp)
         {
             GL.BindVertexArray(_mainObject);
             _shader.Use();
@@ -76,6 +79,22 @@ namespace EventDraw._3d
 
             _shader.SetMatrix4("view", camera.GetViewMatrix());
             _shader.SetMatrix4("projection", camera.GetProjectionMatrix());
+
+            _shader.SetVector3("viewPos", camera.Position);
+
+            _shader.SetVector3("material.ambient", _mat.Ambient);
+            _shader.SetVector3("material.diffuse", _mat.Diffuse);
+            _shader.SetVector3("material.specular", _mat.Specular);
+            _shader.SetFloat("material.shininess", _mat.Shininess);
+
+            Vector3 ambientColor = new Vector3(1.0f) * new Vector3(0.4f);
+            Vector3 diffuseColor = new Vector3(1.0f) * new Vector3(0.8f);
+            Vector3 specularColor = new Vector3(1.0f) * new Vector3(0.5f);
+
+            _shader.SetVector3("light.position", _lamp.Pos);
+            _shader.SetVector3("light.ambient", ambientColor);
+            _shader.SetVector3("light.diffuse", diffuseColor);
+            _shader.SetVector3("light.specular", specularColor);
 
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
         }

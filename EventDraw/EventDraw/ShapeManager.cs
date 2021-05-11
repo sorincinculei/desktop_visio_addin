@@ -20,24 +20,39 @@ namespace EventDraw
         {
             LoadXml();
         }
-        
+
         public void LoadXml()
         {
-            string path = Globals.ThisAddIn.RootPath + xmlFileName;
-            XmlSerializer serializer = new XmlSerializer(typeof(ShapeTypes));
-            FileStream fs = new FileStream(path, FileMode.Open);
-            this._shapetype = (ShapeTypes)serializer.Deserialize(fs);
-            fs.Close();
+            try { 
+                string path = Globals.ThisAddIn.RootPath + xmlFileName;
+                XmlSerializer serializer = new XmlSerializer(typeof(ShapeTypes));
+                if (System.IO.File.Exists(path))
+                { 
+                    FileStream fs = new FileStream(path, FileMode.Open);
+                    this._shapetype = (ShapeTypes)serializer.Deserialize(fs);
+                    fs.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                this._shapetype = new ShapeTypes();
+            }
         }
 
         public void saveXml()
         {
-            string path = Globals.ThisAddIn.RootPath + xmlFileName;
-            XmlSerializer serializer = new XmlSerializer(typeof(ShapeTypes));
-            TextWriter writer = new StreamWriter(path);
+            try { 
+                string path = Globals.ThisAddIn.RootPath + xmlFileName;
+                XmlSerializer serializer = new XmlSerializer(typeof(ShapeTypes));
+                TextWriter writer = new StreamWriter(path);
 
-            serializer.Serialize(writer, this._shapetype);
-            writer.Close();
+                serializer.Serialize(writer, this._shapetype);
+                writer.Close();
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         public ShapeInfo getShapeInfo(string baseId)

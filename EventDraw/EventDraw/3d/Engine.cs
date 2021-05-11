@@ -26,10 +26,10 @@ namespace EventDraw._3d
 
             //CreateCube(new Color4(1.0f, 0.0f, 0.0f, 1.0f), 3.0f, 2.0f, 1.0f);
             
-            string sampleFileName = @"\\3D_Man_Colour_1.obj";
-            string samplefilePath = Globals.ThisAddIn.RootPath + @"\Custom" + sampleFileName;
+            //string sampleFileName = @"\\3D_Man_Colour_1.obj";
+            //string samplefilePath = Globals.ThisAddIn.RootPath + @"\Custom" + sampleFileName;
             //OpenObj(samplefilePath, new Color4(1.0f, 1.0f, 1.0f, 1.0f));
-            OpenTexturedObj(samplefilePath, samplefilePath);
+            //OpenTexturedObj(samplefilePath, samplefilePath);
         }
 
         protected void onLoad()
@@ -113,7 +113,7 @@ namespace EventDraw._3d
 
         public int OpenTexturedObj(string obj, string texture)
         {
-            _mainTexturedObjects.Add(new TexturedObject(obj, _textureShader, texture));
+            _mainTexturedObjects.Add(new TexturedObject(obj, _textureShader, _mainLamp, texture));
             return _mainTexturedObjects.Count - 1;
         }
 

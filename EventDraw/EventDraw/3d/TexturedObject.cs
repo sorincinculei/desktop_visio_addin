@@ -24,14 +24,23 @@ namespace EventDraw._3d
 
         private Vector3 _offset;
 
-        public TexturedObject(string path, Shader textureShader, string texturePath)
+        private readonly Lamp _lamp;
+
+        public TexturedObject(string path, Shader textureShader, Lamp lamp, string texturePath)
         {
+            _lamp = lamp;
+
             m_model = ObjLoader.LoadObjTextured(path);
             List<MeshInfo> infos = ObjLoader.analyzeModel(m_model);
 
             foreach (MeshInfo m in infos)
             {
-                Mesh mesh = new Mesh(m.vertices, m.indicate, textureShader, texturePath);
+                Material mat = new Material();
+                mat.Ambient = convertV(m.ambientC);
+                mat.Diffuse = convertV(m.diffuseC);
+                mat.Specular = convertV(m.specularC);
+
+                Mesh mesh = new Mesh(m.vertices, m.indicate, textureShader, texturePath, mat);
                 mMesh.Add(mesh);
             }
 
@@ -49,7 +58,7 @@ namespace EventDraw._3d
         {
             foreach(Mesh m in mMesh)
             {
-                m.Show(camera);
+                m.Show(camera, _lamp);
             }
         }
 
@@ -124,6 +133,11 @@ namespace EventDraw._3d
             {
                 m.setScale(scale);
             }
+        }
+
+        private Vector3 convertV(Color4 c)
+        {
+            return new Vector3(c.R, c.G, c.B);
         }
     }
 }
