@@ -122,9 +122,14 @@ namespace EventDraw._3d
             _mainTexturedObjects[handle].setPostion(x, y, z);
         }
 
-        public void setScale(float scale, int handle)
+        public Vector3 getBoundingBox(int handle)
         {
-            _mainTexturedObjects[handle].setScale(scale);
+            return _mainTexturedObjects[handle].getBoundingBox();
+        }
+
+        public void setScale(float scaleX, float scaleY, float scaleZ, int handle)
+        {
+            _mainTexturedObjects[handle].setScale(scaleX, scaleY, scaleZ);
         }
 
         private static float[] CreateRectangularPrismVertices(float width, float height, float depth)

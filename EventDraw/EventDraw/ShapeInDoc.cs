@@ -9,7 +9,10 @@ namespace EventDraw
     {
         public string Name;
         public string BaseID;
-        
+
+        public double width;
+        public double height;
+
         public void setName(string name)
         {
             this.Name = name;

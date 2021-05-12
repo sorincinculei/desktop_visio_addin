@@ -26,7 +26,7 @@ namespace EventDraw._3d
 
         private Vector3 _pos;
         private float _rotX, _rotY, _rotZ;
-
+        private Vector3 _scale = new Vector3(1, 1, 1);
         private readonly Material _mat;
 
         public Mesh(float[] vertices, int[] indices, Shader textureShader, string texturePath, Material mat)
@@ -74,7 +74,7 @@ namespace EventDraw._3d
             _shader.Use();
 
             _shader.SetMatrix4("model",
-            Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationX(_rotY) * Matrix4.CreateRotationZ(_rotZ) *
+            Matrix4.CreateScale(_scale) * Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationX(_rotY) * Matrix4.CreateRotationZ(_rotZ) *
             Matrix4.CreateTranslation(_pos));
 
             _shader.SetMatrix4("view", camera.GetViewMatrix());
@@ -119,9 +119,11 @@ namespace EventDraw._3d
             _pos = new Vector3(x, y, z);
         }
 
-        public void setScale(float scale)
+        public void setScale(float scaleX, float scaleY, float scaleZ)
         {
-
+            _scale.X = scaleX;
+            _scale.Y = scaleY;
+            _scale.Z = scaleZ;
         }
 
         public void Dispose()

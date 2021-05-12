@@ -153,9 +153,9 @@ namespace EventDraw
 
         public Scale()
         {
-            this.x = 0;
-            this.y = 0;
-            this.z = 0;
+            this.x = 1.0f;
+            this.y = 1.0f;
+            this.z = 1.0f;
         }
     }
 }

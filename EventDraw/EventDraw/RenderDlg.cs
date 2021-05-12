@@ -139,10 +139,42 @@ namespace EventDraw
                     {
                         var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
 
-
                         int handle = _engine.OpenTexturedObj(filePath, filePath);
-                        _engine.setPostiion((float) x, 0.0f, (float)y, handle);
+                        _engine.setPostiion((float)x, 0.0f, (float)y, handle);
+
+                        float scaleX = modelInfo.modelParams.scale.x;
+                        float scaleY = modelInfo.modelParams.scale.y;
+                        float scaleZ = modelInfo.modelParams.scale.z;
+
+                        _engine.setScale(scaleX, scaleY, scaleZ, handle);
                     }
+                }
+                else
+                {
+                    double width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                    double height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                    double x = shape.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
+                    double y = shape.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
+
+                    string modelPath = @"Custom\1.8m x 1.6m Round Table.obj";
+                    var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
+
+                    int handle = _engine.OpenTexturedObj(filePath, filePath);
+                    _engine.setPostiion((float)x, 0.0f, (float)y, handle);
+
+                    Vector3 bounding = _engine.getBoundingBox(handle);
+
+                    float scaleX = (float)(width / bounding.X);
+                    float scaleZ = (float)(height / bounding.Z);
+
+                    float scaleY = (float)(Math.Min(scaleX, scaleZ));
+
+                    if (scaleX > 5 || scaleY > 5 || scaleZ > 5)
+                    {
+                        scaleX = 0; scaleY = 0; scaleZ = 0;
+                    }
+
+                    _engine.setScale(scaleX, scaleY, scaleZ, handle);
                 }
             }
         }

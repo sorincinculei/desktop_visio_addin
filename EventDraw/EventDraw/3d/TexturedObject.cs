@@ -24,6 +24,8 @@ namespace EventDraw._3d
 
         private Vector3 _offset;
 
+        private Vector3 _scale = new Vector3(1, 1, 1);
+
         private readonly Lamp _lamp;
 
         public TexturedObject(string path, Shader textureShader, Lamp lamp, string texturePath)
@@ -44,14 +46,15 @@ namespace EventDraw._3d
                 mMesh.Add(mesh);
             }
 
-            ComputeBoundingBox();
-
             _rotX = 0.0f;
             _rotY = 0.0f;
             _rotZ = 0.0f;
             _pos = new Vector3(0.0f, 0.0f, 0.0f);
             _offset = new Vector3(0.0f, 0.0f, 0.0f);
             _shader = textureShader;
+
+            ComputeBoundingBox();
+            setPostion(0.0f, 0.0f, 0.0f);
         }
 
         public void Show(Camera camera)
@@ -74,7 +77,16 @@ namespace EventDraw._3d
             _offset.Y = (m_sceneMin.Y + m_sceneMax.Y) / 2.0f;
             _offset.Z = (m_sceneMin.Z + m_sceneMax.Z) / 2.0f;
 
-            setPostion(0.0f, 0.0f, 0.0f);
+        }
+
+        public Vector3 getBoundingBox()
+        {
+            Vector3 result = new Vector3(Vector3.Zero);
+            result.X = m_sceneMax.X - m_sceneMin.X;
+            result.Y = m_sceneMax.Y - m_sceneMin.Y;
+            result.Z = m_sceneMax.Z - m_sceneMin.Z;
+
+            return result;
         }
 
         private void ComputeBoundingBox(Node node, ref Vector3 min, ref Vector3 max, ref Matrix4 trafo)
@@ -121,18 +133,34 @@ namespace EventDraw._3d
 
         public void setPostion(float x, float y, float z)
         {
+            _pos.X = x;
+            _pos.Y = y;
+            _pos.Z = z;
+
             foreach (Mesh m in mMesh)
             {
-                m.SetPositionInSpace(-_offset.X + x, -_offset.Y +  y, -_offset.Z +  z);
+                m.SetPositionInSpace(-_offset.X + x, -_offset.Y  +  y, -_offset.Z +  z);
             }
         }
 
-        public void setScale(float scale)
+        public void setScale(float scaleX, float scaleY, float scaleZ)
         {
+            _scale.X = scaleX;
+            _scale.Y = scaleY;
+            _scale.Z = scaleZ;
+
+            ComputeBoundingBox();
+
+            _offset.X = _offset.X * scaleX;
+            _offset.Y = _offset.Y * scaleY;
+            _offset.Z = _offset.Z * scaleZ;
+
             foreach (Mesh m in mMesh)
             {
-                m.setScale(scale);
+                m.setScale(scaleX, scaleY, scaleZ);
             }
+
+            setPostion(_pos.X, _pos.Y, _pos.Z);
         }
 
         private Vector3 convertV(Color4 c)

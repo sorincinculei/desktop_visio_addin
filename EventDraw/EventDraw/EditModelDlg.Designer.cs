@@ -512,6 +512,11 @@
             0,
             131072});
             this.ipt_scale_z.Location = new System.Drawing.Point(65, 82);
+            this.ipt_scale_z.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.ipt_scale_z.Name = "ipt_scale_z";
             this.ipt_scale_z.Size = new System.Drawing.Size(120, 20);
             this.ipt_scale_z.TabIndex = 8;
@@ -526,6 +531,11 @@
             0,
             131072});
             this.ipt_scale_y.Location = new System.Drawing.Point(65, 60);
+            this.ipt_scale_y.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.ipt_scale_y.Name = "ipt_scale_y";
             this.ipt_scale_y.Size = new System.Drawing.Size(120, 20);
             this.ipt_scale_y.TabIndex = 7;
@@ -540,6 +550,11 @@
             0,
             131072});
             this.ipt_scale_x.Location = new System.Drawing.Point(65, 38);
+            this.ipt_scale_x.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.ipt_scale_x.Name = "ipt_scale_x";
             this.ipt_scale_x.Size = new System.Drawing.Size(120, 20);
             this.ipt_scale_x.TabIndex = 6;
@@ -572,6 +587,7 @@
             this.btn_scale_reset.TabIndex = 4;
             this.btn_scale_reset.Text = "Scale to the size of shape";
             this.btn_scale_reset.UseVisualStyleBackColor = true;
+            this.btn_scale_reset.Click += new System.EventHandler(this.btn_scale_reset_Click);
             // 
             // label5
             // 

@@ -27,15 +27,19 @@ namespace EventDraw
         private int mouseLastY = -1;
         private readonly float _sensitivity = 0.2f;
 
+        private int _modelIndex;
+        private ShapeInDoc _info;
+
         public EditModelDlg(ShapeManager sM, ShapeInDoc info)
         {
             InitializeComponent();
 
-            this.sManager = sM;
-            this._baseId = info.BaseID;
-            this._modelInfo = sManager.getShapeInfo(this._baseId);
+            sManager = sM;
+            _baseId = info.BaseID;
+            _modelInfo = sManager.getShapeInfo(this._baseId);
 
-            this._modelInfo.baseId = this._baseId;
+            _modelInfo.baseId = this._baseId;
+            _info = info;
 
             cbx_model_path.Items.Add(new Store("Building Plan", "Building Plan", false));
             cbx_model_path.Items.Add(new Store("Custom", "Custom", false));
@@ -54,10 +58,16 @@ namespace EventDraw
             // Init Component
             this.lbl_model_type.Text = info.getName();
 
+            // Width And Height
+            this.lbl_width.Text = info.width.ToString();
+            this.lbl_height.Text = info.height.ToString();
+            this.lbl_aspect.Text = (info.width / info.height).ToString();
+
             // Set Rotation
             this.ipt_rotation_x.Value = (decimal)this._modelInfo.modelParams.angle.x;
             this.ipt_rotation_y.Value = (decimal)this._modelInfo.modelParams.angle.y;
             this.ipt_rotation_z.Value = (decimal)this._modelInfo.modelParams.angle.z;
+
         }
 
         protected override void OnLoad(EventArgs e)
@@ -132,6 +142,14 @@ namespace EventDraw
 
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Enable(EnableCap.Blend);
+
+            //Load Model
+            var modelPath = _modelInfo.model.fileName;
+            if (modelPath != "")
+            {
+                var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
+                int handle = _engine.OpenTexturedObj(filePath, filePath);
+            }
         }
 
         private void Render_panel_Load(object sender, EventArgs e)
@@ -206,16 +224,22 @@ namespace EventDraw
         private void ipt_scale_x_ValueChanged(object sender, EventArgs e)
         {
             _modelInfo.modelParams.scale.x = (float) ipt_scale_x.Value;
+
+            _engine.setScale(_modelInfo.modelParams.scale.x, _modelInfo.modelParams.scale.y, _modelInfo.modelParams.scale.z, _modelIndex);
         }
 
         private void ipt_scale_y_ValueChanged(object sender, EventArgs e)
         {
             _modelInfo.modelParams.scale.y = (float) ipt_scale_y.Value;
+
+            _engine.setScale(_modelInfo.modelParams.scale.x, _modelInfo.modelParams.scale.y, _modelInfo.modelParams.scale.z, _modelIndex);
         }
 
         private void ipt_scale_z_ValueChanged(object sender, EventArgs e)
         {
             _modelInfo.modelParams.scale.z = (float) ipt_scale_z.Value;
+
+            _engine.setScale(_modelInfo.modelParams.scale.x, _modelInfo.modelParams.scale.y, _modelInfo.modelParams.scale.z, _modelIndex);
         }
 
         private void btn_add_model_Click(object sender, EventArgs e)
@@ -275,7 +299,17 @@ namespace EventDraw
 
             string filePath = selectedModel.path;
             _engine.Clear();
-            _engine.OpenTexturedObj(filePath, filePath);
+            _modelIndex = _engine.OpenTexturedObj(filePath, filePath);
+        }
+
+        private void btn_scale_reset_Click(object sender, EventArgs e)
+        {
+            Vector3 bounding = _engine.getBoundingBox(_modelIndex);
+
+            ipt_scale_x.Value = (decimal)(_info.width / bounding.X);
+            ipt_scale_z.Value = (decimal)(_info.height / bounding.Z);
+
+            ipt_scale_y.Value = (decimal) Math.Min(_info.width / bounding.X, _info.height / bounding.Z);
         }
     }
 

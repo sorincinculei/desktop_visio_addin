@@ -58,6 +58,20 @@ namespace EventDraw
                     s.setBaseID(shape.Master.BaseID);
                     s.setName(shape.Master.Name);
 
+                    /*
+                    double Left = 0.0;
+                    double Right = 0.0;
+                    double Bottom = 0.0;
+                    double Top = 0.0;
+                    shape.Master.VisualBoundingBox((short) Visio.VisBoundingBoxArgs.visBBoxDrawingCoords, out Left, out Right, out Bottom, out Top);
+
+                    s.width = Right - Left;
+                    s.height = Bottom - Top;
+                    */
+
+                    s.width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                    s.height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+
                     if (!this._usedShape.Contains(s))
                         this._usedShape.Add(s);
                 }
