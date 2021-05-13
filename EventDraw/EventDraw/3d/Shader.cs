@@ -14,9 +14,12 @@ namespace EventDraw._3d
         private readonly Dictionary<string, int> _uniformLocations;
 
         public readonly int Handle;
+        private readonly string _frag;
 
         public Shader(string vert, string frag)
         {
+            _frag = frag;
+
             var vertexShader = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(vertexShader, vert);
             CompileShader(vertexShader);

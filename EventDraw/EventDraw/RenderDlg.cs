@@ -114,7 +114,11 @@ namespace EventDraw
             //pageSheet.Cells["PrintPageOrientation"].FormulaU = "2";
 
             _engine._camera.Front = new Vector3((float) tx / 2.0f, 0.0f, (float)ty / 2.0f);
-            _engine._camera.Distance = (float)Math.Max(tx, ty);
+            _engine._camera.Distance = (float)Math.Max(tx / 2, ty / 2);
+
+            // Create Floor
+            int floorHandle = _engine.CreateCube(new Color4(1.0f, 1.0f, 1.0f, 1.0f), (float) tx, (float) ty, 1);
+            _engine.setPostiion((float)tx / 2, 0.0f, (float)ty / 2, floorHandle);
 
             var shapes = page.Shapes;
             foreach (Visio.Shape shape in shapes)

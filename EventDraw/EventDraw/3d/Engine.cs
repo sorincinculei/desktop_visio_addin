@@ -12,7 +12,7 @@ namespace EventDraw._3d
     public class Engine
     {
         private readonly List<Object> _mainObjects = new List<Object>();
-        private readonly List<TexturedObject> _mainTexturedObjects = new List<TexturedObject>();
+        private readonly List<BaseObject> _mainTexturedObjects = new List<BaseObject>();
 
         public Camera _camera;
         private Shader _lightingShader, _lampShader, _textureShader;
@@ -102,8 +102,8 @@ namespace EventDraw._3d
         public int CreateCube(Color4 color, float width, float height, float depth)
         {
             var cubeVertex = CreateRectangularPrismVertices(width, height, depth);
-            _mainObjects.Add(new Object(cubeVertex, _lightingShader, _mainLamp, color));
-            return _mainObjects.Count - 1;
+            _mainTexturedObjects.Add(new Object(cubeVertex, _lightingShader, _mainLamp, color));
+            return _mainTexturedObjects.Count - 1;
         }
 
         public void OpenObj(string obj, Color4 color)
@@ -119,7 +119,7 @@ namespace EventDraw._3d
 
         public void setPostiion(float x, float y, float z, int handle)
         {
-            _mainTexturedObjects[handle].setPostion(x, y, z);
+            _mainTexturedObjects[handle].SetPosition(x, y, z);
         }
 
         public Vector3 getBoundingBox(int handle)
@@ -129,7 +129,7 @@ namespace EventDraw._3d
 
         public void setScale(float scaleX, float scaleY, float scaleZ, int handle)
         {
-            _mainTexturedObjects[handle].setScale(scaleX, scaleY, scaleZ);
+            _mainTexturedObjects[handle].SetScale(scaleX, scaleY, scaleZ);
         }
 
         private static float[] CreateRectangularPrismVertices(float width, float height, float depth)

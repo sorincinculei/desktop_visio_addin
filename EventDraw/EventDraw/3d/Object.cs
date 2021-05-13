@@ -9,7 +9,8 @@ using OpenTK.Graphics.OpenGL;
 
 namespace EventDraw._3d
 {
-    public class Object { 
+    class Object : BaseObject
+    { 
         private readonly float[] _vertices;
         private readonly int _mainObject;
         private readonly int _vertexBufferObject;
@@ -56,7 +57,7 @@ namespace EventDraw._3d
             SetRotationX(0.5f);
             SetRotationY(0.5f);
             SetRotationZ(0.5f);
-            SetPositionInSpace(0.0f, 0.1f, 0.0f);
+            SetPosition(0.0f, 0.1f, 0.0f);
         }
 
         public Object(float[] vertices, Shader lightingShader, Lamp lamp, Color4 col)
@@ -89,13 +90,13 @@ namespace EventDraw._3d
             _lamp = lamp;
             _color = col;
 
-            SetRotationX(0.5f);
-            SetRotationY(0.5f);
-            SetRotationZ(0.5f);
-            SetPositionInSpace(1.0f, 0.0f, 0.0f);
+            SetRotationX((float) Math.PI / 2);
+            // SetRotationY(0.5f);
+            // SetRotationZ(0.5f);
+            SetPosition(1.0f, 0.0f, 0.0f);
         }
 
-        public void Show(Camera camera)
+        public override void Show(Camera camera)
         {
             GL.BindVertexArray(_mainObject);
             _shader.Use();
@@ -105,9 +106,12 @@ namespace EventDraw._3d
                     Matrix4.CreateRotationZ(_rotZ) * Matrix4.CreateTranslation(_pos));
             _shader.SetMatrix4("view", camera.GetViewMatrix());
             _shader.SetMatrix4("projection", camera.GetProjectionMatrix());
+
+            /*
             _shader.SetVector4("objectColor", new Vector4(_color.R, _color.G, _color.B, _color.A));
             _shader.SetVector3("lightColor", _lamp.LightColor);
             _shader.SetVector3("lightPos", _lamp.Pos);
+            */
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, _vertices.Length / 6);
         }
@@ -127,17 +131,22 @@ namespace EventDraw._3d
             _rotZ = angle;
         }
 
-        public void SetPositionInSpace(float x, float y, float z)
+        public override void SetPosition(float x, float y, float z)
         {
             _pos = new Vector3(x, y, z);
         }
 
-        public void setScale(float scale)
+        public override void SetScale(float x, float y, float z)
         {
 
         }
 
-        public void Dispose()
+        public override Vector3 getBoundingBox()
+        {
+            return new Vector3(1, 1, 1);
+        }
+
+        public override void Dispose()
         {
             GL.DeleteBuffer(_vertexBufferObject);
             GL.DeleteVertexArray(_mainObject);

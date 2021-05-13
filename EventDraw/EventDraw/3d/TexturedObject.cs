@@ -10,7 +10,7 @@ using Assimp;
 
 namespace EventDraw._3d
 {
-    class TexturedObject
+    class TexturedObject : BaseObject
     {
         List<Mesh> mMesh = new List<Mesh>();
 
@@ -54,10 +54,10 @@ namespace EventDraw._3d
             _shader = textureShader;
 
             ComputeBoundingBox();
-            setPostion(0.0f, 0.0f, 0.0f);
+            SetPosition(0.0f, 0.0f, 0.0f);
         }
 
-        public void Show(Camera camera)
+        public override void Show(Camera camera)
         {
             foreach(Mesh m in mMesh)
             {
@@ -74,19 +74,10 @@ namespace EventDraw._3d
             ComputeBoundingBox(m_model.RootNode, ref m_sceneMin, ref m_sceneMax, ref identity);
 
             _offset.X = (m_sceneMin.X + m_sceneMax.X) / 2.0f;
-            _offset.Y = (m_sceneMin.Y + m_sceneMax.Y) / 2.0f;
+            //_offset.Y = (m_sceneMin.Y + m_sceneMax.Y) / 2.0f;
+            _offset.Y = m_sceneMin.Y;
             _offset.Z = (m_sceneMin.Z + m_sceneMax.Z) / 2.0f;
 
-        }
-
-        public Vector3 getBoundingBox()
-        {
-            Vector3 result = new Vector3(Vector3.Zero);
-            result.X = m_sceneMax.X - m_sceneMin.X;
-            result.Y = m_sceneMax.Y - m_sceneMin.Y;
-            result.Z = m_sceneMax.Z - m_sceneMin.Z;
-
-            return result;
         }
 
         private void ComputeBoundingBox(Node node, ref Vector3 min, ref Vector3 max, ref Matrix4 trafo)
@@ -123,7 +114,7 @@ namespace EventDraw._3d
             trafo = prev;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             foreach (Mesh m in mMesh)
             {
@@ -131,7 +122,17 @@ namespace EventDraw._3d
             }
         }
 
-        public void setPostion(float x, float y, float z)
+        public override Vector3 getBoundingBox()
+        {
+            Vector3 result = new Vector3(Vector3.Zero);
+            result.X = m_sceneMax.X - m_sceneMin.X;
+            result.Y = m_sceneMax.Y - m_sceneMin.Y;
+            result.Z = m_sceneMax.Z - m_sceneMin.Z;
+
+            return result;
+        }
+
+        public override void SetPosition(float x, float y, float z)
         {
             _pos.X = x;
             _pos.Y = y;
@@ -143,7 +144,7 @@ namespace EventDraw._3d
             }
         }
 
-        public void setScale(float scaleX, float scaleY, float scaleZ)
+        public override void SetScale(float scaleX, float scaleY, float scaleZ)
         {
             _scale.X = scaleX;
             _scale.Y = scaleY;
@@ -160,7 +161,7 @@ namespace EventDraw._3d
                 m.setScale(scaleX, scaleY, scaleZ);
             }
 
-            setPostion(_pos.X, _pos.Y, _pos.Z);
+            SetPosition(_pos.X, _pos.Y, _pos.Z);
         }
 
         private Vector3 convertV(Color4 c)
