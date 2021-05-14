@@ -21,12 +21,12 @@ namespace EventDraw._3d
         public Engine()
         {
             onLoad();
-            CreateMainLight(new Vector3(10f, 10f, 10f), new Vector3(1.0f, 1.0f, 0.0f));
+            CreateMainLight(new Vector3(0f, 50f, 0f), new Vector3(1.0f, 1.0f, 1.0f));
             // CreatePlane(0.1f, 0.2f, 0.1f, 0.4f, 0.9f, 0.1f, 0.3f, 0.5f, 1.0f, 0.1f, 0.8f, 0.2f,new Color4(0.2f, 0.0f, 0.0f, 0.9f) );
 
             //CreateCube(new Color4(1.0f, 0.0f, 0.0f, 1.0f), 3.0f, 2.0f, 1.0f);
             
-            //string sampleFileName = @"\\3D_Man_Colour_1.obj";
+            //string sampleFileName = @"\\3DVG_Man_Colour.X";
             //string samplefilePath = Globals.ThisAddIn.RootPath + @"\Custom" + sampleFileName;
             //OpenObj(samplefilePath, new Color4(1.0f, 1.0f, 1.0f, 1.0f));
             //OpenTexturedObj(samplefilePath, samplefilePath);
@@ -122,6 +122,11 @@ namespace EventDraw._3d
             _mainTexturedObjects[handle].SetPosition(x, y, z);
         }
 
+        public void setRotate(float x, float y, float z, int handle)
+        {
+            _mainTexturedObjects[handle].SetRotate(x, y, z);
+        }
+
         public Vector3 getBoundingBox(int handle)
         {
             return _mainTexturedObjects[handle].getBoundingBox();
@@ -132,6 +137,10 @@ namespace EventDraw._3d
             _mainTexturedObjects[handle].SetScale(scaleX, scaleY, scaleZ);
         }
 
+        public void showAxis()
+        {
+
+        }
         private static float[] CreateRectangularPrismVertices(float width, float height, float depth)
         {
             var w = width / 2;

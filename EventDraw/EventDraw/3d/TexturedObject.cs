@@ -23,7 +23,6 @@ namespace EventDraw._3d
         private Vector3 m_sceneMin, m_sceneMax;
 
         private Vector3 _offset;
-
         private Vector3 _scale = new Vector3(1, 1, 1);
 
         private readonly Lamp _lamp;
@@ -162,6 +161,16 @@ namespace EventDraw._3d
             }
 
             SetPosition(_pos.X, _pos.Y, _pos.Z);
+        }
+
+        public override void SetRotate(float x, float y, float z)
+        {
+            foreach (Mesh m in mMesh)
+            {
+                m.SetRotationX(x);
+                m.SetRotationY(y);
+                m.SetRotationZ(z);
+            }
         }
 
         private Vector3 convertV(Color4 c)

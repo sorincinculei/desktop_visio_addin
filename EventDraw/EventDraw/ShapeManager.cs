@@ -57,10 +57,14 @@ namespace EventDraw
 
         public ShapeInfo getShapeInfo(string baseId)
         {
+            char[] charsToTrim = { '{', '}' };
+
             List<ShapeInfo> shapeInfos = this._shapetype._shapeInfos;
             foreach (ShapeInfo s in shapeInfos)
             {
-                if (s.baseId == baseId)
+                string sbaseId = s.baseId;
+
+                if (sbaseId == baseId)
                 {
                     return s;
                 }

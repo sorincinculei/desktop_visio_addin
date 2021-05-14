@@ -119,6 +119,7 @@ namespace EventDraw
             // Create Floor
             int floorHandle = _engine.CreateCube(new Color4(1.0f, 1.0f, 1.0f, 1.0f), (float) tx, (float) ty, 1);
             _engine.setPostiion((float)tx / 2, 0.0f, (float)ty / 2, floorHandle);
+            _engine.setRotate((float)Math.PI / 2, 0.0f, 0.0f, floorHandle);
 
             var shapes = page.Shapes;
             foreach (Visio.Shape shape in shapes)
@@ -143,18 +144,32 @@ namespace EventDraw
                     {
                         var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
 
-                        int handle = _engine.OpenTexturedObj(filePath, filePath);
-                        _engine.setPostiion((float)x, 0.0f, (float)y, handle);
+                        int handle = _engine.OpenTexturedObj(filePath + "." + Globals.ThisAddIn.defaultExtension, 
+                            filePath + "." + Globals.ThisAddIn.defaultExtension);
+
+                        /*
+                        if (modelInfo.baseId == "{4D806773-53C2-40E9-84D6-9C42340FB9E0}")
+                        {
+                            var i = 0;
+                        }
+                        */
 
                         float scaleX = modelInfo.modelParams.scale.x;
                         float scaleY = modelInfo.modelParams.scale.y;
                         float scaleZ = modelInfo.modelParams.scale.z;
 
+                        float rotX = modelInfo.modelParams.angle.x;
+                        float rotY = modelInfo.modelParams.angle.y;
+                        float rotZ = modelInfo.modelParams.angle.z;
+
+                        _engine.setPostiion((float)x, 0.0f, (float)y, handle);
                         _engine.setScale(scaleX, scaleY, scaleZ, handle);
+                        _engine.setRotate(rotX, rotY, rotZ, handle);
                     }
                 }
                 else
                 {
+                    /*
                     double width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
                     double height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
                     double x = shape.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
@@ -179,6 +194,7 @@ namespace EventDraw
                     }
 
                     _engine.setScale(scaleX, scaleY, scaleZ, handle);
+                    */
                 }
             }
         }

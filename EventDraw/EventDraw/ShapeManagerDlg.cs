@@ -213,7 +213,7 @@ namespace EventDraw
             _engine?.Clear();
 
             // Load 3D Model
-            if (modelPath != "") Draw3DModel(modelPath);
+            if (modelPath != "") Draw3DModel(modelPath + "." + Globals.ThisAddIn.defaultExtension);
         }
 
         private void DrawMaster()

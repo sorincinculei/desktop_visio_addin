@@ -64,8 +64,13 @@ namespace EventDraw
 
     public class Model
     {
+        [XmlElement("FileName")]
         public string fileName;
+
+        [XmlElement("DisplayName")]
         public string displayName;
+
+        [XmlElement("IsCustomer")]
         public bool IsCustomer;
 
         public Model()
@@ -78,8 +83,8 @@ namespace EventDraw
 
     public class ModelParams
     {
-        [XmlElement("Localtion")]
-        public Location localtion;
+        [XmlElement("Location")]
+        public Location location;
 
         [XmlElement("Angle")]
         public Angle angle;
@@ -93,7 +98,7 @@ namespace EventDraw
 
         public ModelParams()
         {
-            this.localtion = new Location();
+            this.location = new Location();
             this.angle = new Angle();
             this.scale = new Scale();
             this.Height = 0;

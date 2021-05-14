@@ -90,10 +90,10 @@ namespace EventDraw._3d
             _lamp = lamp;
             _color = col;
 
-            SetRotationX((float) Math.PI / 2);
+            // SetRotationX((float) Math.PI / 2);
             // SetRotationY(0.5f);
             // SetRotationZ(0.5f);
-            SetPosition(1.0f, 0.0f, 0.0f);
+            // SetPosition(1.0f, 0.0f, 0.0f);
         }
 
         public override void Show(Camera camera)
@@ -106,12 +106,10 @@ namespace EventDraw._3d
                     Matrix4.CreateRotationZ(_rotZ) * Matrix4.CreateTranslation(_pos));
             _shader.SetMatrix4("view", camera.GetViewMatrix());
             _shader.SetMatrix4("projection", camera.GetProjectionMatrix());
-
-            /*
-            _shader.SetVector4("objectColor", new Vector4(_color.R, _color.G, _color.B, _color.A));
+            
+            _shader.SetVector3("objectColor", new Vector3(_color.R, _color.G, _color.B));
             _shader.SetVector3("lightColor", _lamp.LightColor);
             _shader.SetVector3("lightPos", _lamp.Pos);
-            */
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, _vertices.Length / 6);
         }
@@ -141,6 +139,13 @@ namespace EventDraw._3d
 
         }
 
+        public override void SetRotate(float x, float y, float z)
+        {
+            _rotX = x;
+            _rotY = y;
+            _rotZ = z;
+        }
+
         public override Vector3 getBoundingBox()
         {
             return new Vector3(1, 1, 1);
@@ -151,5 +156,6 @@ namespace EventDraw._3d
             GL.DeleteBuffer(_vertexBufferObject);
             GL.DeleteVertexArray(_mainObject);
         }
+
     }
 }

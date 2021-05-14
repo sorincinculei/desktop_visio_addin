@@ -140,6 +140,7 @@
     <None Include="Interop\Microsoft.Office.Interop.Visio.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="3d\Axis.cs" />
     <Compile Include="3d\BaseObject.cs" />
     <Compile Include="3d\Camera.cs" />
     <Compile Include="3d\Engine.cs" />

@@ -41,9 +41,10 @@ namespace EventDraw
             _modelInfo.baseId = this._baseId;
             _info = info;
 
-            cbx_model_path.Items.Add(new Store("Building Plan", "Building Plan", false));
-            cbx_model_path.Items.Add(new Store("Custom", "Custom", false));
-            cbx_model_path.Items.Add(new Store("Network", "Network", true));
+            cbx_model_path.Items.Add(new Store("Building Plan", @"Building Plan\Shapes", false));
+            cbx_model_path.Items.Add(new Store("Custom", @"Custom\Shapes", false));
+            cbx_model_path.Items.Add(new Store("Network", @"Network\Shapes", true));
+            cbx_model_path.Items.Add(new Store("3DVG", @"3DVG", true));
 
             cbx_model_path.SelectedIndex = 0;
 
@@ -143,12 +144,19 @@ namespace EventDraw
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Enable(EnableCap.Blend);
 
+            // Create Floor
+            int floorHandle = _engine.CreateCube(new Color4(1.0f, 1.0f, 1.0f, 1.0f), (float)_info.width, (float)_info.height, 1);
+            _engine.setRotate((float)Math.PI / 2, 0.0f, 0.0f, floorHandle);
+
             //Load Model
             var modelPath = _modelInfo.model.fileName;
             if (modelPath != "")
             {
                 var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
-                int handle = _engine.OpenTexturedObj(filePath, filePath);
+                _modelIndex = _engine.OpenTexturedObj(
+                    filePath + "." + Globals.ThisAddIn.defaultExtension,
+                    filePath + "." + Globals.ThisAddIn.defaultExtension
+                );
             }
         }
 
@@ -201,16 +209,34 @@ namespace EventDraw
         private void ipt_rotation_x_ValueChanged(object sender, EventArgs e)
         {
             _modelInfo.modelParams.angle.x = (float) ipt_rotation_x.Value;
+
+            float rotX = _modelInfo.modelParams.angle.x;
+            float rotY = _modelInfo.modelParams.angle.y;
+            float rotZ = _modelInfo.modelParams.angle.z;
+
+            if (_engine != null) _engine.setRotate(rotX, rotY, rotZ, _modelIndex);
         }
 
         private void ipt_rotation_y_ValueChanged(object sender, EventArgs e)
         {
             _modelInfo.modelParams.angle.y = (float)ipt_rotation_y.Value;
+
+            float rotX = _modelInfo.modelParams.angle.x;
+            float rotY = _modelInfo.modelParams.angle.y;
+            float rotZ = _modelInfo.modelParams.angle.z;
+
+            if (_engine != null) _engine.setRotate(rotX, rotY, rotZ, _modelIndex);
         }
 
         private void ipt_rotation_z_ValueChanged(object sender, EventArgs e)
         {
             _modelInfo.modelParams.angle.z = (float)ipt_rotation_z.Value;
+
+            float rotX = _modelInfo.modelParams.angle.x;
+            float rotY = _modelInfo.modelParams.angle.y;
+            float rotZ = _modelInfo.modelParams.angle.z;
+
+            if (_engine != null) _engine.setRotate(rotX, rotY, rotZ, _modelIndex);
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -299,7 +325,10 @@ namespace EventDraw
 
             string filePath = selectedModel.path;
             _engine.Clear();
-            _modelIndex = _engine.OpenTexturedObj(filePath, filePath);
+            _modelIndex = _engine.OpenTexturedObj(
+                filePath + "." + Globals.ThisAddIn.defaultExtension, 
+                filePath + "." + Globals.ThisAddIn.defaultExtension
+            );
         }
 
         private void btn_scale_reset_Click(object sender, EventArgs e)

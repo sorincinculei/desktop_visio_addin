@@ -7,6 +7,7 @@ namespace EventDraw
     public partial class ThisAddIn
     {
         public string RootPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\EventDraw";
+        public string defaultExtension = "X";
 
         private ShapeManager sManager;
 
@@ -47,7 +48,7 @@ namespace EventDraw
             this.Application.ActiveDocument.Close();
 
             string sampleFileName = @"\\3D Marquee.vsd";
-            string samplefilePath = RootPath + @"\sample" + sampleFileName;
+            string samplefilePath = RootPath + @"\Samples" + sampleFileName;
 
             if (System.IO.File.Exists(samplefilePath))
             {

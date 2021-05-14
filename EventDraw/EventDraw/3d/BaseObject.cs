@@ -10,8 +10,11 @@ namespace EventDraw._3d
     {
         abstract public void Show(Camera camera);
         abstract public void Dispose();
+
         abstract public void SetPosition(float x, float y, float z);
         abstract public void SetScale(float x, float y, float z);
+        abstract public void SetRotate(float x, float y, float z);
+
         abstract public Vector3 getBoundingBox();
     }
 }
