@@ -74,7 +74,7 @@ namespace EventDraw._3d
             _shader.Use();
 
             _shader.SetMatrix4("model",
-            Matrix4.CreateScale(_scale) * Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationX(_rotY) * Matrix4.CreateRotationZ(_rotZ) *
+            Matrix4.CreateScale(_scale) * Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY) * Matrix4.CreateRotationZ(_rotZ) *
             Matrix4.CreateTranslation(_pos));
 
             _shader.SetMatrix4("view", camera.GetViewMatrix());
@@ -95,6 +95,8 @@ namespace EventDraw._3d
             _shader.SetVector3("light.ambient", ambientColor);
             _shader.SetVector3("light.diffuse", diffuseColor);
             _shader.SetVector3("light.specular", specularColor);
+
+            _shader.SetFloat("opacity", _mat.Opacity);
 
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
         }

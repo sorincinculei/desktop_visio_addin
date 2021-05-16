@@ -124,6 +124,81 @@ namespace EventDraw
             var shapes = page.Shapes;
             foreach (Visio.Shape shape in shapes)
             {
+                int shapeCount = shape.Shapes.Count;
+                if (shapeCount > 0)
+                {
+
+                    double width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                    double height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                    double x = shape.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
+                    double y = shape.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
+
+                    for (int i = 1; i <= shapeCount; i ++)
+                    {
+                        var s = shape.Shapes[i];
+
+                        string baseId = s.Master.BaseID;
+
+                        ShapeInfo modelInfo = sManager.getShapeInfo(baseId);
+                        var modelPath = modelInfo.model.fileName;
+
+                        if (modelPath != "")
+                        {
+                            var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
+
+                            int handle = _engine.OpenTexturedObj(filePath + "." + Globals.ThisAddIn.defaultExtension,
+                                filePath + "." + Globals.ThisAddIn.defaultExtension);
+
+                            float scaleX = modelInfo.modelParams.scale.x;
+                            float scaleY = modelInfo.modelParams.scale.y;
+                            float scaleZ = modelInfo.modelParams.scale.z;
+
+                            float rotX = modelInfo.modelParams.angle.x;
+                            float rotY = modelInfo.modelParams.angle.y;
+                            float rotZ = modelInfo.modelParams.angle.z;
+
+                            _engine.setPostiion((float)x, 0.0f, (float)y, handle);
+                            _engine.setScale(scaleX / 2, scaleY, scaleZ, handle);
+                            _engine.setRotate(rotX, rotY, rotZ, handle);
+                        }
+                    }
+                }
+                else
+                {
+                    if (shape.Master != null)
+                    {
+                        double width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                        double height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                        double x = shape.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
+                        double y = shape.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
+
+                        string baseId = shape.Master.BaseID;
+                        ShapeInfo modelInfo = sManager.getShapeInfo(baseId);
+
+                        var modelPath = modelInfo.model.fileName;
+
+                        if (modelPath != "")
+                        {
+                            var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
+
+                            int handle = _engine.OpenTexturedObj(filePath + "." + Globals.ThisAddIn.defaultExtension,
+                                filePath + "." + Globals.ThisAddIn.defaultExtension);
+
+                            float scaleX = modelInfo.modelParams.scale.x;
+                            float scaleY = modelInfo.modelParams.scale.y;
+                            float scaleZ = modelInfo.modelParams.scale.z;
+
+                            float rotX = modelInfo.modelParams.angle.x;
+                            float rotY = modelInfo.modelParams.angle.y;
+                            float rotZ = modelInfo.modelParams.angle.z;
+
+                            _engine.setPostiion((float)x, 0.0f, (float)y, handle);
+                            _engine.setScale(scaleX, scaleY, scaleZ, handle);
+                            _engine.setRotate(rotX, rotY, rotZ, handle);
+                        }
+                    }
+                }
+                /*
                 if (shape.Master != null)
                 {
 
@@ -147,13 +222,6 @@ namespace EventDraw
                         int handle = _engine.OpenTexturedObj(filePath + "." + Globals.ThisAddIn.defaultExtension, 
                             filePath + "." + Globals.ThisAddIn.defaultExtension);
 
-                        /*
-                        if (modelInfo.baseId == "{4D806773-53C2-40E9-84D6-9C42340FB9E0}")
-                        {
-                            var i = 0;
-                        }
-                        */
-
                         float scaleX = modelInfo.modelParams.scale.x;
                         float scaleY = modelInfo.modelParams.scale.y;
                         float scaleZ = modelInfo.modelParams.scale.z;
@@ -169,33 +237,9 @@ namespace EventDraw
                 }
                 else
                 {
-                    /*
-                    double width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
-                    double height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
-                    double x = shape.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
-                    double y = shape.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
 
-                    string modelPath = @"Custom\1.8m x 1.6m Round Table.obj";
-                    var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
-
-                    int handle = _engine.OpenTexturedObj(filePath, filePath);
-                    _engine.setPostiion((float)x, 0.0f, (float)y, handle);
-
-                    Vector3 bounding = _engine.getBoundingBox(handle);
-
-                    float scaleX = (float)(width / bounding.X);
-                    float scaleZ = (float)(height / bounding.Z);
-
-                    float scaleY = (float)(Math.Min(scaleX, scaleZ));
-
-                    if (scaleX > 5 || scaleY > 5 || scaleZ > 5)
-                    {
-                        scaleX = 0; scaleY = 0; scaleZ = 0;
-                    }
-
-                    _engine.setScale(scaleX, scaleY, scaleZ, handle);
-                    */
                 }
+                */
             }
         }
 

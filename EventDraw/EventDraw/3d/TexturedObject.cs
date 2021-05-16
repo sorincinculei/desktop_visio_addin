@@ -25,6 +25,8 @@ namespace EventDraw._3d
         private Vector3 _offset;
         private Vector3 _scale = new Vector3(1, 1, 1);
 
+        private Matrix4 _transMat;
+
         private readonly Lamp _lamp;
 
         public TexturedObject(string path, Shader textureShader, Lamp lamp, string texturePath)
@@ -40,6 +42,7 @@ namespace EventDraw._3d
                 mat.Ambient = convertV(m.ambientC);
                 mat.Diffuse = convertV(m.diffuseC);
                 mat.Specular = convertV(m.specularC);
+                mat.Opacity = m.opacity;
 
                 Mesh mesh = new Mesh(m.vertices, m.indicate, textureShader, texturePath, mat);
                 mMesh.Add(mesh);
@@ -77,6 +80,7 @@ namespace EventDraw._3d
             _offset.Y = m_sceneMin.Y;
             _offset.Z = (m_sceneMin.Z + m_sceneMax.Z) / 2.0f;
 
+            _transMat = Matrix4.CreateScale(_scale) * Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationX(_rotY) * Matrix4.CreateRotationZ(_rotZ) * Matrix4.CreateTranslation(_pos);
         }
 
         private void ComputeBoundingBox(Node node, ref Vector3 min, ref Vector3 max, ref Matrix4 trafo)
@@ -93,6 +97,10 @@ namespace EventDraw._3d
                     for (int i = 0; i < mesh.VertexCount; i++)
                     {
                         Vector3 tmp = Util.FromVector(mesh.Vertices[i]);
+
+                        // tmp = Vector3.TransformVector(tmp, _transMat);
+                        OpenTK.Quaternion qua = OpenTK.Quaternion.FromEulerAngles(new Vector3(_rotX, _rotY, _rotZ));
+                        tmp = Vector3.Transform(tmp, qua);
                         Vector3.TransformNormal(ref tmp, ref trafo, out tmp);
                         
                         min.X = Math.Min(min.X, tmp.X);
@@ -123,6 +131,8 @@ namespace EventDraw._3d
 
         public override Vector3 getBoundingBox()
         {
+            ComputeBoundingBox();
+
             Vector3 result = new Vector3(Vector3.Zero);
             result.X = m_sceneMax.X - m_sceneMin.X;
             result.Y = m_sceneMax.Y - m_sceneMin.Y;
@@ -165,6 +175,9 @@ namespace EventDraw._3d
 
         public override void SetRotate(float x, float y, float z)
         {
+            _rotX = x;
+            _rotY = y;
+            _rotZ = z;
             foreach (Mesh m in mMesh)
             {
                 m.SetRotationX(x);

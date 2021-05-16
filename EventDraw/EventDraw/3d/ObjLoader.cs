@@ -19,6 +19,7 @@ namespace EventDraw._3d
         public Color4 ambientC;
         public Color4 specularC;
         public Color4 emissiveC;
+        public float opacity;
     }
 
     class ObjLoader
@@ -76,6 +77,13 @@ namespace EventDraw._3d
                     emissiveC = Util.FromColor(mat.ColorEmissive);
                 }
 
+                float opacity = 1.0f;
+                if (mat.HasOpacity)
+                {
+                    opacity = mat.Opacity;
+                }
+
+
                 Vector3[] positions = new Vector3[m.VertexCount];
                 Vector2[] textureCoords = new Vector2[m.VertexCount];
                 Vector3[] normals = new Vector3[m.VertexCount];
@@ -118,6 +126,7 @@ namespace EventDraw._3d
                 mInfo.ambientC = ambientC;
                 mInfo.specularC = specularC;
                 mInfo.emissiveC = emissiveC;
+                mInfo.opacity = opacity;
 
                 result.Add(mInfo);
             }

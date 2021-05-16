@@ -12,6 +12,7 @@ namespace EventDraw._3d
         private Vector3 _diffuse;
         private Vector3 _specular;
         private float _shininess;
+        private float _opacity;
 
         public Material()
         {
@@ -19,14 +20,28 @@ namespace EventDraw._3d
             Diffuse = new Vector3(1.0f, 0.5f, 0.31f);
             Specular = new Vector3(0.5f, 0.5f, 0.5f);
             Shininess = 32.0f;
+            Opacity = 1.0f;
         }
 
-        public Material(Vector3 ambient, Vector3 diffuse, Vector3 specular, float shiniess)
+        public Material(Vector3 ambient, Vector3 diffuse, Vector3 specular, float shiniess, float opacity)
         {
             Ambient = ambient;
             Diffuse = diffuse;
             Specular = specular;
             Shininess = shiniess;
+            Opacity = opacity;
+        }
+
+        public float Opacity
+        {
+            get
+            {
+                return _opacity;
+            }
+            set
+            {
+                _opacity = value;
+            }
         }
 
         public Vector3 Ambient

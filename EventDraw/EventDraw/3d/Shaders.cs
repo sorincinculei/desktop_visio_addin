@@ -105,6 +105,7 @@ namespace EventDraw._3d
             uniform Material material;
             //We still need the view position.
             uniform vec3 viewPos;
+            uniform float opacity;
 
             out vec4 FragColor;
 
@@ -132,7 +133,7 @@ namespace EventDraw._3d
                 //multiply the light with the object here, instead we do it for each element seperatly. This allows much better control
                 //over how each element is applied to different objects.
                 vec3 result = ambient + diffuse + specular;
-                FragColor = vec4(result, 1.0);
+                FragColor = vec4(result, opacity);
             }";
 
         /// <summary>

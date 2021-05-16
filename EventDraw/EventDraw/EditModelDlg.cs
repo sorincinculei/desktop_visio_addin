@@ -51,7 +51,6 @@ namespace EventDraw
             btn_add_model.Enabled = false;
             btn_remove_model.Enabled = false;
 
-            InitialValues(info);
         }
 
         private void InitialValues(ShapeInDoc info)
@@ -63,6 +62,12 @@ namespace EventDraw
             this.lbl_width.Text = info.width.ToString();
             this.lbl_height.Text = info.height.ToString();
             this.lbl_aspect.Text = (info.width / info.height).ToString();
+
+
+            // Set Scale Value
+            this.ipt_scale_x.Value = (decimal)this._modelInfo.modelParams.scale.x;
+            this.ipt_scale_y.Value = (decimal)this._modelInfo.modelParams.scale.y;
+            this.ipt_scale_z.Value = (decimal)this._modelInfo.modelParams.scale.z;
 
             // Set Rotation
             this.ipt_rotation_x.Value = (decimal)this._modelInfo.modelParams.angle.x;
@@ -80,6 +85,7 @@ namespace EventDraw
             this.render_panel.Load += Render_panel_Load;
             this.render_panel.Resize += Render_panel_Resize;
             this.render_panel.Paint += Render_panel_Paint;
+
 
             Render_panel_Resize(this.render_panel, EventArgs.Empty);
 
@@ -158,6 +164,8 @@ namespace EventDraw
                     filePath + "." + Globals.ThisAddIn.defaultExtension
                 );
             }
+
+            InitialValues(_info);
         }
 
         private void Render_panel_Load(object sender, EventArgs e)

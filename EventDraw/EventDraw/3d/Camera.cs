@@ -148,7 +148,10 @@ namespace EventDraw._3d
             _distance += delta / SystemInformation.MouseWheelScrollDelta * 10.00f;
 
             // keep scale between 0.1 - 10
-            _distance = Math.Min(_distance * 10.0f, Math.Max(0.01f, _distance));
+            //_distance = Math.Min(_distance * 10.0f, Math.Max(0.01f, _distance));
+            _distance = Math.Max(_distance, 0.01f);
+            _distance = Math.Min(_distance, _distance * 10.0f);
+
             UpdateVectors();
         }
     }
