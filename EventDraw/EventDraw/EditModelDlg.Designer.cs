@@ -34,6 +34,9 @@
             this.panel5 = new System.Windows.Forms.Panel();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.lbl_bound_z = new System.Windows.Forms.Label();
+            this.lbl_bound_y = new System.Windows.Forms.Label();
+            this.lbl_bound_x = new System.Windows.Forms.Label();
             this.lbl_aspect = new System.Windows.Forms.Label();
             this.lbl_height = new System.Windows.Forms.Label();
             this.lbl_width = new System.Windows.Forms.Label();
@@ -144,6 +147,9 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.lbl_bound_z);
+            this.panel2.Controls.Add(this.lbl_bound_y);
+            this.panel2.Controls.Add(this.lbl_bound_x);
             this.panel2.Controls.Add(this.lbl_aspect);
             this.panel2.Controls.Add(this.lbl_height);
             this.panel2.Controls.Add(this.lbl_width);
@@ -158,6 +164,33 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(268, 542);
             this.panel2.TabIndex = 1;
+            // 
+            // lbl_bound_z
+            // 
+            this.lbl_bound_z.AutoSize = true;
+            this.lbl_bound_z.Location = new System.Drawing.Point(131, 132);
+            this.lbl_bound_z.Name = "lbl_bound_z";
+            this.lbl_bound_z.Size = new System.Drawing.Size(41, 13);
+            this.lbl_bound_z.TabIndex = 11;
+            this.lbl_bound_z.Text = "label15";
+            // 
+            // lbl_bound_y
+            // 
+            this.lbl_bound_y.AutoSize = true;
+            this.lbl_bound_y.Location = new System.Drawing.Point(131, 117);
+            this.lbl_bound_y.Name = "lbl_bound_y";
+            this.lbl_bound_y.Size = new System.Drawing.Size(41, 13);
+            this.lbl_bound_y.TabIndex = 10;
+            this.lbl_bound_y.Text = "label14";
+            // 
+            // lbl_bound_x
+            // 
+            this.lbl_bound_x.AutoSize = true;
+            this.lbl_bound_x.Location = new System.Drawing.Point(131, 102);
+            this.lbl_bound_x.Name = "lbl_bound_x";
+            this.lbl_bound_x.Size = new System.Drawing.Size(41, 13);
+            this.lbl_bound_x.TabIndex = 9;
+            this.lbl_bound_x.Text = "label13";
             // 
             // lbl_aspect
             // 
@@ -349,6 +382,16 @@
             0,
             131072});
             this.ipt_rotation_z.Location = new System.Drawing.Point(61, 74);
+            this.ipt_rotation_z.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.ipt_rotation_z.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
             this.ipt_rotation_z.Name = "ipt_rotation_z";
             this.ipt_rotation_z.Size = new System.Drawing.Size(120, 20);
             this.ipt_rotation_z.TabIndex = 6;
@@ -363,6 +406,16 @@
             0,
             131072});
             this.ipt_rotation_y.Location = new System.Drawing.Point(62, 47);
+            this.ipt_rotation_y.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.ipt_rotation_y.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
             this.ipt_rotation_y.Name = "ipt_rotation_y";
             this.ipt_rotation_y.Size = new System.Drawing.Size(120, 20);
             this.ipt_rotation_y.TabIndex = 5;
@@ -377,6 +430,16 @@
             0,
             131072});
             this.ipt_rotation_x.Location = new System.Drawing.Point(63, 20);
+            this.ipt_rotation_x.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.ipt_rotation_x.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
             this.ipt_rotation_x.Name = "ipt_rotation_x";
             this.ipt_rotation_x.Size = new System.Drawing.Size(120, 20);
             this.ipt_rotation_x.TabIndex = 4;
@@ -441,6 +504,11 @@
             0,
             131072});
             this.ipt_offset_y.Location = new System.Drawing.Point(59, 42);
+            this.ipt_offset_y.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
             this.ipt_offset_y.Name = "ipt_offset_y";
             this.ipt_offset_y.Size = new System.Drawing.Size(120, 20);
             this.ipt_offset_y.TabIndex = 4;
@@ -454,6 +522,11 @@
             0,
             131072});
             this.ipt_offset_x.Location = new System.Drawing.Point(60, 18);
+            this.ipt_offset_x.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
             this.ipt_offset_x.Name = "ipt_offset_x";
             this.ipt_offset_x.Size = new System.Drawing.Size(120, 20);
             this.ipt_offset_x.TabIndex = 3;
@@ -517,6 +590,11 @@
             0,
             0,
             0});
+            this.ipt_scale_z.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
             this.ipt_scale_z.Name = "ipt_scale_z";
             this.ipt_scale_z.Size = new System.Drawing.Size(120, 20);
             this.ipt_scale_z.TabIndex = 8;
@@ -536,6 +614,11 @@
             0,
             0,
             0});
+            this.ipt_scale_y.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
             this.ipt_scale_y.Name = "ipt_scale_y";
             this.ipt_scale_y.Size = new System.Drawing.Size(120, 20);
             this.ipt_scale_y.TabIndex = 7;
@@ -555,6 +638,11 @@
             0,
             0,
             0});
+            this.ipt_scale_x.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
             this.ipt_scale_x.Name = "ipt_scale_x";
             this.ipt_scale_x.Size = new System.Drawing.Size(120, 20);
             this.ipt_scale_x.TabIndex = 6;
@@ -710,5 +798,8 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lbl_bound_z;
+        private System.Windows.Forms.Label lbl_bound_y;
+        private System.Windows.Forms.Label lbl_bound_x;
     }
 }

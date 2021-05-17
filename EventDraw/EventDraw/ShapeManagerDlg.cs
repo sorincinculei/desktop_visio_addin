@@ -43,7 +43,13 @@ namespace EventDraw
             sM.saveXml();
             LoadShapeFromActive();
         }
-        
+
+        protected override void OnHandleDestroyed(EventArgs e)
+        {
+            _engine.Destory();
+            base.OnHandleDestroyed(e);
+        }
+
         private void LoadShapeFromActive()
         {
             Visio.Documents visioDocs = this.appliction.Documents;
@@ -224,7 +230,10 @@ namespace EventDraw
         private void Draw3DModel(string path)
         {
             var model_path = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, path);
-            _engine.OpenTexturedObj(model_path, model_path);
+            var _modelIndex = _engine.OpenTexturedObj(model_path, model_path);
+
+            Vector3 bounding = _engine.getBoundingBox(_modelIndex);
+            _engine._camera.Distance = bounding.Length;
         }
     }
 }

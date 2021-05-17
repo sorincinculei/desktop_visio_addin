@@ -141,6 +141,12 @@ namespace EventDraw._3d
         {
 
         }
+
+        public void Destory()
+        {
+            OnUnload();
+        }
+
         private static float[] CreateRectangularPrismVertices(float width, float height, float depth)
         {
             var w = width / 2;

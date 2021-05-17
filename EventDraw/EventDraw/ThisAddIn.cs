@@ -47,7 +47,7 @@ namespace EventDraw
         {
             this.Application.ActiveDocument.Close();
 
-            string sampleFileName = @"\\3D Marquee.vsd";
+            string sampleFileName = @"\\QT Ballroom_Plan_3D3.vsd";
             string samplefilePath = RootPath + @"\Samples" + sampleFileName;
 
             if (System.IO.File.Exists(samplefilePath))

@@ -53,6 +53,12 @@ namespace EventDraw
 
         }
 
+        protected override void OnHandleDestroyed(EventArgs e)
+        {
+            _engine.Destory();
+            base.OnHandleDestroyed(e);
+        }
+
         private void InitialValues(ShapeInDoc info)
         {
             // Init Component
@@ -177,8 +183,6 @@ namespace EventDraw
         {
             this.render_panel.MakeCurrent();
 
-            this.render_panel.MakeCurrent();
-
             if (this.render_panel.ClientSize.Height == 0)
                 this.render_panel.ClientSize = new System.Drawing.Size(this.render_panel.ClientSize.Width, 1);
             GL.Viewport(0, 0, this.render_panel.ClientSize.Width, this.render_panel.ClientSize.Height);
@@ -259,21 +263,30 @@ namespace EventDraw
         {
             _modelInfo.modelParams.scale.x = (float) ipt_scale_x.Value;
 
-            _engine.setScale(_modelInfo.modelParams.scale.x, _modelInfo.modelParams.scale.y, _modelInfo.modelParams.scale.z, _modelIndex);
+            setScale();
         }
 
         private void ipt_scale_y_ValueChanged(object sender, EventArgs e)
         {
             _modelInfo.modelParams.scale.y = (float) ipt_scale_y.Value;
 
-            _engine.setScale(_modelInfo.modelParams.scale.x, _modelInfo.modelParams.scale.y, _modelInfo.modelParams.scale.z, _modelIndex);
+            setScale();
         }
 
         private void ipt_scale_z_ValueChanged(object sender, EventArgs e)
         {
             _modelInfo.modelParams.scale.z = (float) ipt_scale_z.Value;
+            setScale();
+        }
 
+        private void setScale()
+        {
             _engine.setScale(_modelInfo.modelParams.scale.x, _modelInfo.modelParams.scale.y, _modelInfo.modelParams.scale.z, _modelIndex);
+            Vector3 bounding = _engine.getBoundingBox(_modelIndex);
+            lbl_bound_x.Text = bounding.X.ToString();
+            lbl_bound_y.Text = bounding.Y.ToString();
+            lbl_bound_z.Text = bounding.Z.ToString();
+            _engine.setPostiion(0, 0, 0, _modelIndex);
         }
 
         private void btn_add_model_Click(object sender, EventArgs e)
@@ -343,10 +356,12 @@ namespace EventDraw
         {
             Vector3 bounding = _engine.getBoundingBox(_modelIndex);
 
-            ipt_scale_x.Value = (decimal)(_info.width / bounding.X);
-            ipt_scale_z.Value = (decimal)(_info.height / bounding.Z);
+            ipt_scale_x.Value = (decimal)(_info.width / bounding.X) * ipt_scale_x.Value;
+            ipt_scale_z.Value = (decimal)(_info.height / bounding.Z) * ipt_scale_z.Value;
+            ipt_scale_y.Value = (decimal) Math.Min(ipt_scale_x.Value, ipt_scale_z.Value);
 
-            ipt_scale_y.Value = (decimal) Math.Min(_info.width / bounding.X, _info.height / bounding.Z);
+            //ipt_scale_y.Value = (decimal)(_info.height / bounding.Y) * ipt_scale_y.Value;
+            //ipt_scale_z.Value = (decimal)Math.Min(ipt_scale_x.Value, ipt_scale_y.Value);
         }
     }
 

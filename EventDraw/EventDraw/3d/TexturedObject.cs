@@ -25,8 +25,6 @@ namespace EventDraw._3d
         private Vector3 _offset;
         private Vector3 _scale = new Vector3(1, 1, 1);
 
-        private Matrix4 _transMat;
-
         private readonly Lamp _lamp;
 
         public TexturedObject(string path, Shader textureShader, Lamp lamp, string texturePath)
@@ -80,7 +78,7 @@ namespace EventDraw._3d
             _offset.Y = m_sceneMin.Y;
             _offset.Z = (m_sceneMin.Z + m_sceneMax.Z) / 2.0f;
 
-            _transMat = Matrix4.CreateScale(_scale) * Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationX(_rotY) * Matrix4.CreateRotationZ(_rotZ) * Matrix4.CreateTranslation(_pos);
+            //_transMat = Matrix4.CreateScale(_scale) * Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationX(_rotY) * Matrix4.CreateRotationZ(_rotZ) * Matrix4.CreateTranslation(_pos);
         }
 
         private void ComputeBoundingBox(Node node, ref Vector3 min, ref Vector3 max, ref Matrix4 trafo)
@@ -99,9 +97,19 @@ namespace EventDraw._3d
                         Vector3 tmp = Util.FromVector(mesh.Vertices[i]);
 
                         // tmp = Vector3.TransformVector(tmp, _transMat);
+
+                        /*
                         OpenTK.Quaternion qua = OpenTK.Quaternion.FromEulerAngles(new Vector3(_rotX, _rotY, _rotZ));
                         tmp = Vector3.Transform(tmp, qua);
                         Vector3.TransformNormal(ref tmp, ref trafo, out tmp);
+                        */
+
+                        Matrix3 transform = Matrix3.Identity;
+                        transform *= Matrix3.CreateRotationX(_rotX);
+                        transform *= Matrix3.CreateRotationY(_rotY);
+                        transform *= Matrix3.CreateRotationZ(_rotZ);
+                        transform *= Matrix3.CreateScale(_scale);
+                        tmp = Vector3.Transform(tmp, transform);
                         
                         min.X = Math.Min(min.X, tmp.X);
                         min.Y = Math.Min(min.Y, tmp.Y);
@@ -161,9 +169,11 @@ namespace EventDraw._3d
 
             ComputeBoundingBox();
 
+            /*
             _offset.X = _offset.X * scaleX;
             _offset.Y = _offset.Y * scaleY;
             _offset.Z = _offset.Z * scaleZ;
+            */
 
             foreach (Mesh m in mMesh)
             {

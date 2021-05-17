@@ -74,7 +74,7 @@ namespace EventDraw._3d
             _shader.Use();
 
             _shader.SetMatrix4("model",
-            Matrix4.CreateScale(_scale) * Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY) * Matrix4.CreateRotationZ(_rotZ) *
+            Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY) * Matrix4.CreateRotationZ(_rotZ) * Matrix4.CreateScale(_scale) * 
             Matrix4.CreateTranslation(_pos));
 
             _shader.SetMatrix4("view", camera.GetViewMatrix());
