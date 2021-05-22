@@ -57,6 +57,60 @@ namespace EventDraw._3d
             SetPosition(0.0f, 0.0f, 0.0f);
         }
 
+        public TexturedObject(Scene p_model, List<Mesh> pmMesh, Shader textureShader, Lamp lamp, string texturePath)
+        {
+            _lamp = lamp;
+
+            m_model = p_model;
+            List<MeshInfo> infos = ObjLoader.analyzeModel(m_model);
+
+            foreach (MeshInfo m in infos)
+            {
+                Material mat = new Material();
+                mat.Ambient = convertV(m.ambientC);
+                mat.Diffuse = convertV(m.diffuseC);
+                mat.Specular = convertV(m.specularC);
+                mat.Opacity = m.opacity;
+
+                Mesh mesh = new Mesh(m.vertices, m.indicate, textureShader, texturePath, mat);
+                mMesh.Add(mesh);
+            }
+
+            _rotX = 0.0f;
+            _rotY = 0.0f;
+            _rotZ = 0.0f;
+            _pos = new Vector3(0.0f, 0.0f, 0.0f);
+            _offset = new Vector3(0.0f, 0.0f, 0.0f);
+            _shader = textureShader;
+
+            ComputeBoundingBox();
+            SetPosition(0.0f, 0.0f, 0.0f);
+        }
+
+        public Scene MeshD
+        {
+            get
+            {
+                return m_model;
+            }
+            set
+            {
+                m_model = value;
+            }
+        }
+
+        public List<Mesh> MeshL
+        {
+            get
+            {
+                return mMesh;
+            }
+            set
+            {
+                mMesh = value;
+            }
+        }
+
         public override void Show(Camera camera)
         {
             foreach(Mesh m in mMesh)
@@ -199,6 +253,11 @@ namespace EventDraw._3d
         private Vector3 convertV(Color4 c)
         {
             return new Vector3(c.R, c.G, c.B);
+        }
+
+        public override BaseObject Clone(Shader textureShader, Lamp lamp, string texturePath)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -38,5 +38,10 @@ namespace EventDraw._3d
         {
             
         }
+
+        public override BaseObject Clone(Shader textureShader, Lamp lamp, string texturePath)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

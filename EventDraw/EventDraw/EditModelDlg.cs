@@ -346,10 +346,15 @@ namespace EventDraw
 
             string filePath = selectedModel.path;
             _engine.Clear();
+
+            /*
             _modelIndex = _engine.OpenTexturedObj(
                 filePath + "." + Globals.ThisAddIn.defaultExtension, 
                 filePath + "." + Globals.ThisAddIn.defaultExtension
             );
+            */
+
+            _modelIndex = _engine.OpenTexturedObj(filePath, filePath);
         }
 
         private void btn_scale_reset_Click(object sender, EventArgs e)

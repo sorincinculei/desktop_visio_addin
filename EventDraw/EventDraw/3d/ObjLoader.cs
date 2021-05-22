@@ -37,6 +37,31 @@ namespace EventDraw._3d
             return model;
         }
 
+        public static void exportModel()
+        {
+
+        }
+
+        public static String[] GetSupportList()
+        {
+            AssimpContext importer = new AssimpContext();
+            String[] importFormatList = importer.GetSupportedImportFormats();
+
+            return importFormatList;
+        }
+
+        public static bool ConvertModel(string inputPath, string outputPath)
+        {
+            Scene scene = LoadObjTextured(inputPath);
+
+            AssimpContext exporter = new AssimpContext();
+            //ExportFormatDescription[] exportFormat = exporter.GetSupportedExportFormats();
+
+            // return false;
+            return exporter.ConvertFromFileToFile(inputPath, outputPath, "x");
+            //return exporter.ExportFile(scene, outputPath, "x");
+        }
+
         public static List<MeshInfo> analyzeModel(Scene model)
         {
 

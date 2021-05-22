@@ -70,6 +70,7 @@ namespace EventDraw._3d
 
         public void Show(Camera camera, Lamp _lamp)
         {
+            GL.Enable(EnableCap.Blend);
             GL.BindVertexArray(_mainObject);
             _shader.Use();
 
@@ -80,25 +81,26 @@ namespace EventDraw._3d
             _shader.SetMatrix4("view", camera.GetViewMatrix());
             _shader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
-            _shader.SetVector3("viewPos", camera.Position);
+            //_shader.SetVector3("viewPos", camera.Position);
 
-            _shader.SetVector3("material.ambient", _mat.Ambient);
+            //_shader.SetVector3("material.ambient", _mat.Ambient);
             _shader.SetVector3("material.diffuse", _mat.Diffuse);
-            _shader.SetVector3("material.specular", _mat.Specular);
-            _shader.SetFloat("material.shininess", _mat.Shininess);
+            //_shader.SetVector3("material.specular", _mat.Specular);
+            //_shader.SetFloat("material.shininess", _mat.Shininess);
 
-            Vector3 ambientColor = new Vector3(1.0f) * new Vector3(0.4f);
-            Vector3 diffuseColor = new Vector3(1.0f) * new Vector3(0.8f);
-            Vector3 specularColor = new Vector3(1.0f) * new Vector3(0.5f);
+            //Vector3 ambientColor = new Vector3(1.0f) * new Vector3(0.4f);
+            //Vector3 diffuseColor = new Vector3(1.0f) * new Vector3(0.8f);
+            //Vector3 specularColor = new Vector3(1.0f) * new Vector3(0.5f);
 
-            _shader.SetVector3("light.position", _lamp.Pos);
-            _shader.SetVector3("light.ambient", ambientColor);
-            _shader.SetVector3("light.diffuse", diffuseColor);
-            _shader.SetVector3("light.specular", specularColor);
+            //_shader.SetVector3("light.position", _lamp.Pos);
+            //_shader.SetVector3("light.ambient", ambientColor);
+            //_shader.SetVector3("light.diffuse", diffuseColor);
+            //_shader.SetVector3("light.specular", specularColor);
 
             _shader.SetFloat("opacity", _mat.Opacity);
 
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.Disable(EnableCap.Blend);
         }
 
         public void SetRotationX(float angle)

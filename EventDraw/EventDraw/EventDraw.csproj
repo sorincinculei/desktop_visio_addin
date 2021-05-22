@@ -144,6 +144,7 @@
     <Compile Include="3d\BaseObject.cs" />
     <Compile Include="3d\Camera.cs" />
     <Compile Include="3d\Engine.cs" />
+    <Compile Include="3d\Floor.cs" />
     <Compile Include="3d\InputHandler.cs" />
     <Compile Include="3d\Lamp.cs" />
     <Compile Include="3d\Material.cs" />
@@ -155,6 +156,7 @@
     <Compile Include="3d\Texture.cs" />
     <Compile Include="3d\TexturedObject.cs" />
     <Compile Include="3d\Util.cs" />
+    <Compile Include="3d\Wall.cs" />
     <Compile Include="BoundingBox.cs" />
     <Compile Include="EditModelDlg.cs">
       <SubType>Form</SubType>

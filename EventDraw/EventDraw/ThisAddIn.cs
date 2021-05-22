@@ -45,7 +45,8 @@ namespace EventDraw
 
         public void OpenSample()
         {
-            this.Application.ActiveDocument.Close();
+            if (this.Application.ActivePage != null)
+                this.Application.ActiveDocument.Close();
 
             string sampleFileName = @"\\QT Ballroom_Plan_3D3.vsd";
             string samplefilePath = RootPath + @"\Samples" + sampleFileName;

@@ -21,7 +21,7 @@ namespace EventDraw._3d
         public Engine()
         {
             onLoad();
-            CreateMainLight(new Vector3(0f, 50f, 0f), new Vector3(1.0f, 1.0f, 1.0f));
+            CreateMainLight(new Vector3(50f, 50f, 50f), new Vector3(1.0f, 1.0f, 1.0f));
             // CreatePlane(0.1f, 0.2f, 0.1f, 0.4f, 0.9f, 0.1f, 0.3f, 0.5f, 1.0f, 0.1f, 0.8f, 0.2f,new Color4(0.2f, 0.0f, 0.0f, 0.9f) );
 
             //CreateCube(new Color4(1.0f, 0.0f, 0.0f, 1.0f), 3.0f, 2.0f, 1.0f);
@@ -106,6 +106,20 @@ namespace EventDraw._3d
             return _mainTexturedObjects.Count - 1;
         }
 
+        public int CreateWall(Color4 color, float width, float height)
+        {
+            var cubeVertex = CreateRectangularPrismVertices(width, 300, height);
+            _mainTexturedObjects.Add(new Wall(cubeVertex, _lightingShader, _mainLamp, color));
+            return _mainTexturedObjects.Count - 1;
+        }
+
+        public int CreateFloor(Color4 color, float width, float height)
+        {
+            var cubeVertex = CreateRectangularPrismVertices(width, 1, height);
+            _mainTexturedObjects.Add(new Floor(cubeVertex, _lightingShader, _mainLamp, color));
+            return _mainTexturedObjects.Count - 1;
+        }
+
         public void OpenObj(string obj, Color4 color)
         {
             _mainObjects.Add(new Object(obj, _lightingShader, _mainLamp, color));
@@ -114,6 +128,14 @@ namespace EventDraw._3d
         public int OpenTexturedObj(string obj, string texture)
         {
             _mainTexturedObjects.Add(new TexturedObject(obj, _textureShader, _mainLamp, texture));
+            return _mainTexturedObjects.Count - 1;
+        }
+
+        public int cloneTextureObj(int handle)
+        {
+            TexturedObject preObj = (TexturedObject)_mainTexturedObjects[handle];
+            _mainTexturedObjects.Add(new TexturedObject(preObj.MeshD, preObj.MeshL, _textureShader, _mainLamp, ""));
+
             return _mainTexturedObjects.Count - 1;
         }
 

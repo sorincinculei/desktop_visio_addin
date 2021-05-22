@@ -16,5 +16,6 @@ namespace EventDraw._3d
         abstract public void SetRotate(float x, float y, float z);
 
         abstract public Vector3 getBoundingBox();
+        abstract public BaseObject Clone(Shader textureShader, Lamp lamp, string texturePath);
     }
 }
