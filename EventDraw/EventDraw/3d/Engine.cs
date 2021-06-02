@@ -108,7 +108,7 @@ namespace EventDraw._3d
 
         public int CreateWall(Color4 color, float width, float height)
         {
-            var cubeVertex = CreateRectangularPrismVertices(width, 300, height);
+            var cubeVertex = CreateRectangularPrismVertices(width, 500, height);
             _mainTexturedObjects.Add(new Wall(cubeVertex, _lightingShader, _mainLamp, color));
             return _mainTexturedObjects.Count - 1;
         }

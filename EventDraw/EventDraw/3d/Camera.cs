@@ -62,7 +62,7 @@ namespace EventDraw._3d
             }
             set
             {
-                var angle = MathHelper.Clamp(value, 0f, 89f);
+                var angle = MathHelper.Clamp(value, 0f, 90f);
                 _pitch = MathHelper.DegreesToRadians(angle);
                 UpdateVectors();
             }

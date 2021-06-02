@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+
 using Visio = Microsoft.Office.Interop.Visio;
 
 namespace EventDraw
@@ -11,15 +13,37 @@ namespace EventDraw
 
         private ShapeManager sManager;
 
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr SetParent(IntPtr hWndChild, int hWndNewParent);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
+
         /// <summary>
         /// A simple command
         /// </summary>
+        /// 
         public void Render()
         {
+            Visio.Window window = this.Application.ActiveWindow.Windows.Add("3D Rendering111", Visio.VisWindowStates.visWSVisible);
             RenderDlg dlg = new RenderDlg(this.Application, this.sManager);
-            dlg.ShowDialog();
+            dlg.Show();
+            IntPtr ParenthWnd = new IntPtr(0);
+            ParenthWnd = FindWindow(null, "3D Rendering");
+            if (ParenthWnd.Equals(IntPtr.Zero))
+            {
+                
+            }
+            else
+            {
+                SetWindowLong(ParenthWnd, -16, 0x40000000 | 0x10000000);
+                SetParent(ParenthWnd, window.WindowHandle32);
+            }
         }
-
+        
         public void Setting()
         {
             SettingDlg d = new SettingDlg();
@@ -64,7 +88,13 @@ namespace EventDraw
             sManager = new ShapeManager();
 
             //System.IO.Directory.CreateDirectory(RootPath);
+            //this.Application.SetCustomMenus(vsoUIObject);
 
+            var commands = Application.CommandBars;
+            foreach (var command in commands)
+            {
+                var name = command.Name;
+            }
         }
 
         private void ThisAddIn_Shutdown(object sender, EventArgs e)
@@ -123,7 +153,96 @@ namespace EventDraw
         {
             Startup += ThisAddIn_Startup;
             Shutdown += ThisAddIn_Shutdown;
+
+            CustomMenu();
+
+            this.Application.DocumentOpened += new Visio.EApplication_DocumentOpenedEventHandler(Document_Opened);
+            this.Application.SelectionAdded += new Visio.EApplication_SelectionAddedEventHandler(Shape_Selected);
+
+            this.Application.MarkerEvent += new Visio.EApplication_MarkerEventEventHandler(Marker_Event);
+
+            this.Application.SelectionChanged += new Visio.EApplication_SelectionChangedEventHandler(Selection_Changed);
+            //this.Application.CommandBars.Add("ContextMenu", Microsoft.Office.Core.MsoBarPosition.msoBarBottom, missing, true);
+            //Microsoft.Office.Core.CommandBarButton bt = (Microsoft.Office.Core.CommandBarButton) commandBar.Controls.Add(Microsoft.Office.Core.MsoControlType.msoControlButton, System.Type.Missing, System.Type.Missing, commandBar.Controls.Count + 1, true);
+            // bt.Visible = true;
+            //bt.Caption = "Test Context Menu on Store";
         }
 
+        private void Document_Opened(Visio.Document doc)
+        {
+
+        }
+
+        private void Shape_Selected(Visio.Selection selction)
+        {
+            var i = 0;
+
+            var j = 0;
+        }
+
+        private void Marker_Event(Visio.Application app, int SequenceNum, string ContextString)
+        {
+            if (ContextString == "3D_Height")
+            {
+                var selection = app.ActiveWindow.Selection;
+                if (selection.Count > 0)
+                {
+                    HeightDlg dlg = new HeightDlg(app, selection.PrimaryItem);
+                    dlg.Show();
+                }
+            }
+        }
+
+        private void Selection_Changed(Visio.Window window)
+        {
+            /*
+            var commandBars = (Microsoft.Office.Core.CommandBars)this.Application.CommandBars;
+            var commandBar = commandBars[1];
+
+            var commandBar1 = commandBars.ActionControl;
+
+            Microsoft.Office.Core.CommandBar _ContextMenu = this.Application.CommandBars.Add("ContextMenu", Microsoft.Office.Core.MsoBarPosition.msoBarPopup, missing, true);
+            Microsoft.Office.Core.CommandBarButton bt = (Microsoft.Office.Core.CommandBarButton)_ContextMenu.Controls.Add(Microsoft.Office.Core.MsoControlType.msoControlButton, System.Type.Missing, System.Type.Missing, _ContextMenu.Controls.Count + 1, true);
+            bt.Visible = true;
+            bt.Caption = "Test Context Menu on Store";
+            */
+        }
+
+        private void CustomMenu()
+        {
+            var vsoUIObject = this.Application.BuiltInMenus;
+            var vsoMenuSets = vsoUIObject.MenuSets;
+
+            var vsoMenuSet = vsoMenuSets.ItemAtID[(short)Visio.VisUIObjSets.visUIObjSetCntx_DrawObjSel];
+
+            for (int i = 0; i < vsoMenuSet.Menus.Count; i ++)
+            {
+                var menu = vsoMenuSet.Menus[i];
+                menu.Caption = "Menubar";
+
+                for (int j = 0; j < menu.MenuItems.Count; j++)
+                {
+                    var text = menu.MenuItems[j].Caption;
+                }
+
+                var vsoMenuItems = menu.MenuItems;
+                var vsoMenuItem = vsoMenuItems.Add();
+                vsoMenuItem.Caption = "&3D Height";
+                vsoMenuItem.AddOnName = "QUEUEMARKEREVENT";
+                vsoMenuItem.AddOnArgs = "3D_Height";
+            }
+
+            this.Application.SetCustomMenus(vsoUIObject);
+
+            /*
+            Microsoft.Office.Core.CommandBar menubar = this.Application.CommandBars["Menu Bar"];
+
+            var subButton = (Microsoft.Office.Core.CommandBarButton)menubar.Controls.Add();
+            subButton.Caption = "Subscribe";
+            subButton.BeginGroup = false;
+            subButton.Tag = "subButton";
+            */
+            var p = 0;
+        }
     }
 }

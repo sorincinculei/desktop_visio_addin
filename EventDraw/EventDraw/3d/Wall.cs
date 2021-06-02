@@ -11,7 +11,7 @@ namespace EventDraw._3d
 {
     class Wall : Object
     {
-        private float height = 300;
+        private float height = 500;
 
         public Wall(float[] vertices, Shader lightingShader, Lamp lamp, Color4 col)
             : base(vertices, lightingShader, lamp, col)

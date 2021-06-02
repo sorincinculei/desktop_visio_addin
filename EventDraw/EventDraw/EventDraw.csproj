@@ -164,6 +164,12 @@
     <Compile Include="EditModelDlg.Designer.cs">
       <DependentUpon>EditModelDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="HeightDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HeightDlg.Designer.cs">
+      <DependentUpon>HeightDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="ImportDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -221,6 +227,9 @@
     </Compile>
     <EmbeddedResource Include="EditModelDlg.resx">
       <DependentUpon>EditModelDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HeightDlg.resx">
+      <DependentUpon>HeightDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ImportDlg.resx">
       <DependentUpon>ImportDlg.cs</DependentUpon>

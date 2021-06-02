@@ -19,6 +19,9 @@ namespace EventDraw
     
     public partial class RenderDlg : Form
     {
+        private string elevationProp = "Prop.BaseElevation";
+        private string heightProp = "Prop.Height3D";
+
         private Engine _engine;
         private ShapeManager sManager;
 
@@ -81,32 +84,45 @@ namespace EventDraw
 
                 mouseLastX = x;
                 mouseLastY = y;
+
+
+                this.render_panel.Invalidate();
             };
 
             inputHandler.mouseWheelMoved += (int delta) =>
             {
                 _engine._camera.Zoom(delta);
+
+                this.render_panel.Invalidate();
             };
 
             inputHandler.keyDownListeners.Add(Keys.W, (modifiy) => {
                 _engine._camera.Forward();
+
+                this.render_panel.Invalidate();
             });
 
             inputHandler.keyDownListeners.Add(Keys.S, (modifiy) => {
                 _engine._camera.Backwards();
+
+                this.render_panel.Invalidate();
             });
 
             inputHandler.keyDownListeners.Add(Keys.A, (modifiy) => {
                 _engine._camera.LeftMove();
+
+                this.render_panel.Invalidate();
             });
 
             inputHandler.keyDownListeners.Add(Keys.D, (modifiy) => {
                 _engine._camera.RightMove();
+
+                this.render_panel.Invalidate();
             });
-
-
+            
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Enable(EnableCap.Blend);
+
         }
 
         private void loadScene()
@@ -159,9 +175,11 @@ namespace EventDraw
                         float rotY = modelInfo.modelParams.angle.y - (float)Math.PI * (float)ss.angle / 180f;
                         float rotZ = modelInfo.modelParams.angle.z;
 
+                        float elevation = ss.elevation;
+
                         _engine.setRotate(rotX, rotY, rotZ, modelIndex);
                         _engine.setScale(scaleX, scaleY, scaleZ, modelIndex);
-                        _engine.setPostiion((float)ss.x, 0.0f, (float)ss.y, modelIndex);
+                        _engine.setPostiion((float)ss.x, 0.0f + elevation, (float)ss.y, modelIndex);
                     }
                 }
                 else
@@ -345,11 +363,44 @@ namespace EventDraw
         {
             List<RenderModel> result = new List<RenderModel>();
 
+            /*
+            int ShapeCount = shapes.Count;
+
+            for (int i = 1; i <= ShapeCount; i++)
+            {
+                Visio.Shape shape = shapes[i];
+
+                var t = shape.Text;
+
+                double sx = shape.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
+                double sy = shape.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
+                double sangle = shape.Cells["Angle"].Result[Visio.VisUnitCodes.visAngleUnits];
+                double width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                double height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+
+                RenderModel model = new RenderModel();
+                model.baseId = shape.Master != null ? shape.Master.BaseID : "{4D806773-53C2-40E9-84D6-9C42340FB9E0}";
+                model.x = (float)pageWidth - (float)(0 + sx);
+                model.y = (float)(0 + sy);
+                model.width = (float)(width);
+                model.height = (float)(height);
+                model.angle = (float)(0 + sangle);
+                model.text = shape.Master != null ? shape.Master.Name : shape.Text;
+
+                if (model.text == "Wall" || model.text == "Pilaster" || model.text == "Dynamic Double")
+                {
+                    var isd = 0;
+                }
+
+                model.baseId = (model.text == "Wall" || model.text == "Pilaster" || model.text == "Dynamic Double") ? model.text : model.baseId;
+                result.Add(model);
+            }
+            */
+
             foreach (Visio.Shape shape in shapes)
             {
                 AnalyzePage(shape, 0, 0, 0, ref result, pageWidth);
             }
-
             return result;
         }
 
@@ -364,6 +415,16 @@ namespace EventDraw
             if (shape.Master != null)
             {
                 RenderModel model = new RenderModel();
+
+                double elevation = 0;
+                if (shape.Cells[elevationProp] != null)
+                {
+                    elevation = shape.Cells[elevationProp].Result[Visio.VisUnitCodes.visNumber];
+                }
+
+                double modelheight = 0;
+
+
                 model.baseId = shape.Master.BaseID;
                 model.x = (float) pageWidth - (float) (x + sx);
                 model.y = (float) (y + sy);
@@ -371,10 +432,12 @@ namespace EventDraw
                 model.height = (float) (height);
                 model.angle = (float)( angle + sangle);
                 model.text = shape.Master.Name;
+                model.elevation = (float) elevation;
+
                 result.Add(model);
                 
                 int shapeCount = shape.Master.Shapes.Count;
-                if (shapeCount > 0)
+                if (shapeCount > 1)
                 {
                     for (int i = 1; i <= shapeCount; i++)
                     {
@@ -437,8 +500,6 @@ namespace EventDraw
             //GL.DepthMask(true);
 
             this.render_panel.SwapBuffers();
-
-            this.render_panel.Invalidate();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -454,6 +515,48 @@ namespace EventDraw
                 }
             }
         }
+
+        // Set Camera to Left of Scene
+        private void leftToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _engine._camera.Pitch = 90f;
+            _engine._camera.Yaw = 0f;
+        }
+
+        private void rightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _engine._camera.Pitch = 90f;
+            _engine._camera.Yaw = 180f;
+        }
+
+        private void topToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void frontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _engine._camera.Pitch = 90f;
+            _engine._camera.Yaw = 90f;
+        }
+
+        private void backToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _engine._camera.Pitch = 90f;
+            _engine._camera.Yaw = 270f;
+        }
+
+        private void render_panel_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                var x = e.X;
+                var y = e.Y;
+
+                //GL.RenderMode(RenderingMode.Select);
+                //this.render_panel.SwapBuffers();
+            }
+        }
     }
 
     class RenderModel
@@ -465,5 +568,6 @@ namespace EventDraw
         public float angle;
         public float width;
         public float height;
+        public float elevation;
     }
 }
