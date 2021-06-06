@@ -10,6 +10,8 @@ namespace EventDraw._3d
 {
     class Mesh
     {
+        TexturedObject _parent;
+
         private readonly float[] _vertices;
         private readonly int[] _indices;
 
@@ -29,8 +31,10 @@ namespace EventDraw._3d
         private Vector3 _scale = new Vector3(1, 1, 1);
         private readonly Material _mat;
 
-        public Mesh(float[] vertices, int[] indices, Shader textureShader, string texturePath, Material mat)
+        public Mesh(float[] vertices, int[] indices, Shader textureShader, string texturePath, Material mat, TexturedObject parent)
         {
+            _parent = parent;
+
             _vertices = vertices;
             _indices = indices;
             _mat = mat;
@@ -76,7 +80,7 @@ namespace EventDraw._3d
 
             _shader.SetMatrix4("model",
             Matrix4.CreateRotationX(_rotX) * Matrix4.CreateRotationY(_rotY) * Matrix4.CreateRotationZ(_rotZ) * Matrix4.CreateScale(_scale) * 
-            Matrix4.CreateTranslation(_pos));
+            Matrix4.CreateTranslation(new Vector3(_pos.X, _pos.Y + _parent.Elevation, _pos.Z)));
 
             _shader.SetMatrix4("view", camera.GetViewMatrix());
             _shader.SetMatrix4("projection", camera.GetProjectionMatrix());

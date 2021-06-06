@@ -16,9 +16,6 @@ namespace EventDraw._3d
 
         private readonly Shader _shader;
 
-        private Vector3 _pos;
-        private float _rotX, _rotY, _rotZ;
-
         private Scene m_model;
         private Vector3 m_sceneMin, m_sceneMax;
 
@@ -42,7 +39,7 @@ namespace EventDraw._3d
                 mat.Specular = convertV(m.specularC);
                 mat.Opacity = m.opacity;
 
-                Mesh mesh = new Mesh(m.vertices, m.indicate, textureShader, texturePath, mat);
+                Mesh mesh = new Mesh(m.vertices, m.indicate, textureShader, texturePath, mat, this);
                 mMesh.Add(mesh);
             }
 
@@ -72,7 +69,7 @@ namespace EventDraw._3d
                 mat.Specular = convertV(m.specularC);
                 mat.Opacity = m.opacity;
 
-                Mesh mesh = new Mesh(m.vertices, m.indicate, textureShader, texturePath, mat);
+                Mesh mesh = new Mesh(m.vertices, m.indicate, textureShader, texturePath, mat, this);
                 mMesh.Add(mesh);
             }
 

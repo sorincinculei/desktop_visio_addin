@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EventDraw._3d;
+using OpenTK;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,7 +20,9 @@ namespace EventDraw
 
         private Visio.Shape SelectedShape { get; set; }
         private Visio.Application App { get; }
-        public HeightDlg(Visio.Application app, Visio.Shape shape)
+        private Engine _engine;
+
+        public HeightDlg(Visio.Application app, Visio.Shape shape, Engine renderEngine)
         {
             InitializeComponent();
 
@@ -26,6 +30,7 @@ namespace EventDraw
             SelectedShape = shape;
 
             InitValue();
+            _engine = renderEngine;
         }
 
         private void InitValue()
@@ -65,17 +70,24 @@ namespace EventDraw
             Visio.Selection overlapedShapes = ActivePage.SpatialSearch[sx, sy, (short) Visio.VisSpatialRelationCodes.visSpatialTouching, intTolerance, (short) intFlag];
             int count = overlapedShapes.Count;
             */
-            Visio.Selection overlapedShapes = SelectedShape.SpatialNeighbors[(short)Visio.VisSpatialRelationCodes.visSpatialOverlap, intTolerance, 0];
+            Visio.Selection overlapedShapes = SelectedShape.SpatialNeighbors[(short)Visio.VisSpatialRelationCodes.visSpatialContainedIn | (short)Visio.VisSpatialRelationCodes.visSpatialOverlap, intTolerance, 0];
+            int shapeCount = overlapedShapes.Count;
 
-            foreach (Visio.Shape overlapedShape in overlapedShapes)
-            {
-                if (overlapedShape.Master != null)
+            float elevation = 0;
+            if (_engine != null)
+            { 
+                foreach (Visio.Shape overlapedShape in overlapedShapes)
                 {
-                    
+                    if (overlapedShape.Master != null)
+                    {
+                        int shapeId = overlapedShape.ID;
+                        Vector3 boundingBox = _engine.getBoundingBox(shapeId);
+
+                        elevation = Math.Max(elevation, boundingBox.Y);
+                    }
                 }
             }
-
-            var Count = overlapedShapes.Count;
+            ipt_base_elevation.Value = (decimal) elevation;
 
             /*
             List<Visio.Shape> overlapedShapes = new List<Visio.Shape>();

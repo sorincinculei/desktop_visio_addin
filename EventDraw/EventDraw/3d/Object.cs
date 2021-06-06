@@ -19,8 +19,6 @@ namespace EventDraw._3d
         private readonly Color4 _color;
         private readonly Lamp _lamp;
 
-        private Vector3 _pos;
-        private float _rotX, _rotY, _rotZ;
         private float _scale = 1.0f;
         protected float _opacity = 1.0f;
 

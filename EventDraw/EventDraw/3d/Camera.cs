@@ -14,8 +14,8 @@ namespace EventDraw._3d
         private Vector3 _front = new Vector3(0, 0, 0);
 
         private float _distance = 80.00f;
-        private float _pitch;
-        private float _yaw = -MathHelper.PiOver2;
+        private float _pitch = MathHelper.PiOver2;
+        private float _yaw = MathHelper.PiOver2;
 
         private readonly float _cameraSpeed = 0.1f;
 
@@ -24,11 +24,12 @@ namespace EventDraw._3d
             //Position = position;
             AspectRatio = aspectRatio;
 
+
             UpdateVectors();
         }
 
         public Vector3 Position { get; set; }
-        private float AspectRatio { get; set; }
+        public float AspectRatio { get; set; }
         public Vector3 Front {
             get
             {

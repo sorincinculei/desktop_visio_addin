@@ -12,24 +12,28 @@ namespace EventDraw._3d
     public class Engine
     {
         private readonly List<Object> _mainObjects = new List<Object>();
-        private readonly List<BaseObject> _mainTexturedObjects = new List<BaseObject>();
+        private readonly IDictionary<int, BaseObject> _mainTexturedObjects = new Dictionary<int, BaseObject>();
+        //private readonly List<BaseObject> _mainTexturedObjects = new List<BaseObject>();
 
         public Camera _camera;
         private Shader _lightingShader, _lampShader, _textureShader;
         private Lamp _mainLamp;
+        Random _rand;
 
         public Engine()
         {
             onLoad();
             CreateMainLight(new Vector3(50f, 50f, 50f), new Vector3(1.0f, 1.0f, 1.0f));
-            // CreatePlane(0.1f, 0.2f, 0.1f, 0.4f, 0.9f, 0.1f, 0.3f, 0.5f, 1.0f, 0.1f, 0.8f, 0.2f,new Color4(0.2f, 0.0f, 0.0f, 0.9f) );
 
+            // CreatePlane(0.1f, 0.2f, 0.1f, 0.4f, 0.9f, 0.1f, 0.3f, 0.5f, 1.0f, 0.1f, 0.8f, 0.2f,new Color4(0.2f, 0.0f, 0.0f, 0.9f) );
             //CreateCube(new Color4(1.0f, 0.0f, 0.0f, 1.0f), 3.0f, 2.0f, 1.0f);
-            
+
             //string sampleFileName = @"\\3DVG_Man_Colour.X";
             //string samplefilePath = Globals.ThisAddIn.RootPath + @"\Custom" + sampleFileName;
             //OpenObj(samplefilePath, new Color4(1.0f, 1.0f, 1.0f, 1.0f));
             //OpenTexturedObj(samplefilePath, samplefilePath);
+
+            _rand = new Random();
         }
 
         protected void onLoad()
@@ -48,19 +52,19 @@ namespace EventDraw._3d
         protected void OnUnload()
         {
             foreach (var obj in _mainObjects) obj.Dispose();
-            foreach (var obj in _mainTexturedObjects) obj.Dispose();
+            foreach (var obj in _mainTexturedObjects.Values) obj.Dispose();
         }
 
         public void Render3DObjects()
         {
             foreach (var obj in _mainObjects) obj.Show(_camera);
-            foreach (var obj in _mainTexturedObjects) obj.Show(_camera);
+            foreach (var obj in _mainTexturedObjects.Values) obj.Show(_camera);
         }
 
         public void Clear()
         {
             foreach (var obj in _mainObjects) obj.Dispose();
-            foreach (var obj in _mainTexturedObjects) obj.Dispose();
+            foreach (var obj in _mainTexturedObjects.Values) obj.Dispose();
 
             _mainObjects.Clear();
             _mainTexturedObjects.Clear();
@@ -102,22 +106,27 @@ namespace EventDraw._3d
         public int CreateCube(Color4 color, float width, float height, float depth)
         {
             var cubeVertex = CreateRectangularPrismVertices(width, height, depth);
-            _mainTexturedObjects.Add(new Object(cubeVertex, _lightingShader, _mainLamp, color));
-            return _mainTexturedObjects.Count - 1;
+            int cubeId = _rand.Next(100000, 1000000);
+            _mainTexturedObjects.Add(cubeId, new Object(cubeVertex, _lightingShader, _mainLamp, color));
+            return cubeId;
+            //_mainTexturedObjects.Add(new Object(cubeVertex, _lightingShader, _mainLamp, color));
+            //return _mainTexturedObjects.Count - 1;
         }
 
         public int CreateWall(Color4 color, float width, float height)
         {
             var cubeVertex = CreateRectangularPrismVertices(width, 500, height);
-            _mainTexturedObjects.Add(new Wall(cubeVertex, _lightingShader, _mainLamp, color));
-            return _mainTexturedObjects.Count - 1;
+            int cubeId = _rand.Next(1000000, 10000000);
+            _mainTexturedObjects.Add(cubeId, new Wall(cubeVertex, _lightingShader, _mainLamp, color));
+            return cubeId;
         }
 
         public int CreateFloor(Color4 color, float width, float height)
         {
             var cubeVertex = CreateRectangularPrismVertices(width, 1, height);
-            _mainTexturedObjects.Add(new Floor(cubeVertex, _lightingShader, _mainLamp, color));
-            return _mainTexturedObjects.Count - 1;
+            int cubeId = _rand.Next(1000000, 10000000);
+            _mainTexturedObjects.Add(cubeId, new Floor(cubeVertex, _lightingShader, _mainLamp, color));
+            return cubeId;
         }
 
         public void OpenObj(string obj, Color4 color)
@@ -127,16 +136,27 @@ namespace EventDraw._3d
 
         public int OpenTexturedObj(string obj, string texture)
         {
+            /*
             _mainTexturedObjects.Add(new TexturedObject(obj, _textureShader, _mainLamp, texture));
             return _mainTexturedObjects.Count - 1;
+            */
+
+            int cubeId = _rand.Next(1000000, 10000000);
+            _mainTexturedObjects.Add(cubeId, new TexturedObject(obj, _textureShader, _mainLamp, texture));
+            return cubeId;
         }
 
-        public int cloneTextureObj(int handle)
+        public int cloneTextureObj(int modelID, int handle)
         {
+            /*
             TexturedObject preObj = (TexturedObject)_mainTexturedObjects[handle];
             _mainTexturedObjects.Add(new TexturedObject(preObj.MeshD, preObj.MeshL, _textureShader, _mainLamp, ""));
 
             return _mainTexturedObjects.Count - 1;
+            */
+            TexturedObject preObj = (TexturedObject)_mainTexturedObjects[handle];
+            _mainTexturedObjects.Add(modelID, new TexturedObject(preObj.MeshD, preObj.MeshL, _textureShader, _mainLamp, ""));
+            return modelID;
         }
 
         public void setPostiion(float x, float y, float z, int handle)
@@ -151,12 +171,17 @@ namespace EventDraw._3d
 
         public Vector3 getBoundingBox(int handle)
         {
-            return _mainTexturedObjects[handle].getBoundingBox();
+            return _mainTexturedObjects.ContainsKey(handle) ? _mainTexturedObjects[handle].getBoundingBox() : new Vector3(0, 0, 0);
         }
 
         public void setScale(float scaleX, float scaleY, float scaleZ, int handle)
         {
             _mainTexturedObjects[handle].SetScale(scaleX, scaleY, scaleZ);
+        }
+
+        public void setElevation(int shapeId, float elevation)
+        {
+            _mainTexturedObjects[shapeId].Elevation = elevation;
         }
 
         public void showAxis()

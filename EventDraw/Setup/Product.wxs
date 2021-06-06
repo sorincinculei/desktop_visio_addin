@@ -88,13 +88,12 @@
     
     <!-- Visio files to be included in setup -->
     <ComponentGroup Id="VisioFiles" Directory="APPLICATIONFOLDER">
-      
-    <Component>
-        <File Name="3D Master Shapes.vss">
-            <visio:PublishStencil MenuPath="EventDraw\3D Master Shapes" />
-        </File>
-    </Component>
-</ComponentGroup>
+        <Component>
+            <File Name="3D Master Shapes.vss">
+                <visio:PublishStencil MenuPath="EventDraw\3D Master Shapes" />
+            </File>
+        </Component>
+    </ComponentGroup>
     
     <!-- Addin files to be included in setup -->
     <ComponentGroup Id="AddinFiles" Directory="APPLICATIONFOLDER">

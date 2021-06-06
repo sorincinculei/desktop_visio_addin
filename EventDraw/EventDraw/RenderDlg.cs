@@ -41,8 +41,29 @@ namespace EventDraw
 
             appliction = app;
             this.sManager = sM;
+
+            this.appliction.FormulaChanged += new Visio.EApplication_FormulaChangedEventHandler(Formula_Changed);
         }
 
+        public Engine RenderEngine
+        {
+            get
+            {
+                return _engine;
+            }
+        }
+
+        private void Formula_Changed(Visio.Cell cell)
+        {
+            // Base Elevation Changed
+            if (cell.Name == elevationProp)
+            {
+                float elevation = (float) cell.Result[Visio.VisUnitCodes.visNumber];
+                _engine.setElevation(cell.Shape.ID, elevation);
+                this.render_panel.Invalidate();
+            }
+        }
+        
         protected override void OnHandleDestroyed(EventArgs e)
         {
             _engine.Destory();
@@ -55,7 +76,6 @@ namespace EventDraw
 
             _engine = new Engine();
 
-            this.render_panel.Load += Render_panel_Load;
             this.render_panel.Resize += Render_panel_Resize;
             this.render_panel.Paint += Render_panel_Paint;
 
@@ -84,7 +104,6 @@ namespace EventDraw
 
                 mouseLastX = x;
                 mouseLastY = y;
-
 
                 this.render_panel.Invalidate();
             };
@@ -122,7 +141,6 @@ namespace EventDraw
             
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Enable(EnableCap.Blend);
-
         }
 
         private void loadScene()
@@ -165,7 +183,9 @@ namespace EventDraw
 
                     foreach (var ss in grouplist)
                     {
-                        int modelIndex = _engine.cloneTextureObj(handle);
+                        int ID = ss.ID;
+
+                        int modelIndex = _engine.cloneTextureObj(ID, handle);
 
                         float scaleX = modelInfo.modelParams.scale.x;
                         float scaleY = modelInfo.modelParams.scale.y;
@@ -179,7 +199,8 @@ namespace EventDraw
 
                         _engine.setRotate(rotX, rotY, rotZ, modelIndex);
                         _engine.setScale(scaleX, scaleY, scaleZ, modelIndex);
-                        _engine.setPostiion((float)ss.x, 0.0f + elevation, (float)ss.y, modelIndex);
+                        _engine.setPostiion((float)ss.x, 0.0f, (float)ss.y, modelIndex);
+                        _engine.setElevation(modelIndex, elevation);
                     }
                 }
                 else
@@ -233,10 +254,52 @@ namespace EventDraw
                     }
                 }
             }
-                /*
-                foreach(RenderModel list in lists)
+            /*
+            foreach(RenderModel list in lists)
+            {
+                ShapeInfo modelInfo = sManager.getShapeInfo(list.baseId);
+                var modelPath = modelInfo.model.fileName;
+
+                if (modelPath != "")
                 {
-                    ShapeInfo modelInfo = sManager.getShapeInfo(list.baseId);
+                    var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
+
+                    int handle = _engine.OpenTexturedObj(filePath + "." + Globals.ThisAddIn.defaultExtension,
+                        filePath + "." + Globals.ThisAddIn.defaultExtension);
+
+                    float scaleX = modelInfo.modelParams.scale.x;
+                    float scaleY = modelInfo.modelParams.scale.y;
+                    float scaleZ = modelInfo.modelParams.scale.z;
+
+                    float rotX = modelInfo.modelParams.angle.x;
+                    float rotY = modelInfo.modelParams.angle.y - (float)Math.PI * (float)list.angle / 180f;
+                    float rotZ = modelInfo.modelParams.angle.z;
+
+                    _engine.setRotate(rotX, rotY, rotZ, handle);
+                    _engine.setScale(scaleX, scaleY, scaleZ, handle);
+                    _engine.setPostiion((float)list.x, 0.0f, (float)list.y, handle);
+                }
+                else
+                {
+
+                }
+            }
+            */
+
+            /*
+            foreach (Visio.Shape shape in shapes)
+            {
+                if (shape.Master != null)
+                {
+                    double width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                    double height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                    double x = shape.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
+                    double y = shape.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
+                    double angle = shape.Cells["Angle"].Result[Visio.VisUnitCodes.visAngleUnits];
+
+                    string baseId = shape.Master.BaseID;
+                    ShapeInfo modelInfo = sManager.getShapeInfo(baseId);
+
                     var modelPath = modelInfo.model.fileName;
 
                     if (modelPath != "")
@@ -251,113 +314,71 @@ namespace EventDraw
                         float scaleZ = modelInfo.modelParams.scale.z;
 
                         float rotX = modelInfo.modelParams.angle.x;
-                        float rotY = modelInfo.modelParams.angle.y - (float)Math.PI * (float)list.angle / 180f;
+                        float rotY = modelInfo.modelParams.angle.y - (float)Math.PI * (float) angle / 180f;
                         float rotZ = modelInfo.modelParams.angle.z;
 
                         _engine.setRotate(rotX, rotY, rotZ, handle);
                         _engine.setScale(scaleX, scaleY, scaleZ, handle);
-                        _engine.setPostiion((float)list.x, 0.0f, (float)list.y, handle);
-                    }
-                    else
-                    {
-
+                        _engine.setPostiion((float)x, 0.0f, (float)y, handle);
                     }
                 }
-                */
-
-                /*
-                foreach (Visio.Shape shape in shapes)
+                else
                 {
-                    if (shape.Master != null)
+                    int shapeCount = shape.Shapes.Count;
+                    if (shapeCount > 0)
                     {
+
                         double width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
                         double height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
                         double x = shape.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
                         double y = shape.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
                         double angle = shape.Cells["Angle"].Result[Visio.VisUnitCodes.visAngleUnits];
 
-                        string baseId = shape.Master.BaseID;
-                        ShapeInfo modelInfo = sManager.getShapeInfo(baseId);
 
-                        var modelPath = modelInfo.model.fileName;
-
-                        if (modelPath != "")
+                        for (int i = 1; i <= shapeCount; i++)
                         {
-                            var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
+                            var s = shape.Shapes[i];
 
-                            int handle = _engine.OpenTexturedObj(filePath + "." + Globals.ThisAddIn.defaultExtension,
-                                filePath + "." + Globals.ThisAddIn.defaultExtension);
+                            double swidth = s.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                            double sheight = s.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
+                            double sx = s.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
+                            double sy = s.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
+                            double sangle = s.Cells["Angle"].Result[Visio.VisUnitCodes.visAngleUnits];
 
-                            float scaleX = modelInfo.modelParams.scale.x;
-                            float scaleY = modelInfo.modelParams.scale.y;
-                            float scaleZ = modelInfo.modelParams.scale.z;
-
-                            float rotX = modelInfo.modelParams.angle.x;
-                            float rotY = modelInfo.modelParams.angle.y - (float)Math.PI * (float) angle / 180f;
-                            float rotZ = modelInfo.modelParams.angle.z;
-
-                            _engine.setRotate(rotX, rotY, rotZ, handle);
-                            _engine.setScale(scaleX, scaleY, scaleZ, handle);
-                            _engine.setPostiion((float)x, 0.0f, (float)y, handle);
-                        }
-                    }
-                    else
-                    {
-                        int shapeCount = shape.Shapes.Count;
-                        if (shapeCount > 0)
-                        {
-
-                            double width = shape.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
-                            double height = shape.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
-                            double x = shape.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
-                            double y = shape.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
-                            double angle = shape.Cells["Angle"].Result[Visio.VisUnitCodes.visAngleUnits];
-
-
-                            for (int i = 1; i <= shapeCount; i++)
+                            if (s.Master != null)
                             {
-                                var s = shape.Shapes[i];
+                                string baseId = s.Master.BaseID;
 
-                                double swidth = s.Cells["Width"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
-                                double sheight = s.Cells["Height"].Result[Microsoft.Office.Interop.Visio.VisUnitCodes.visCentimeters];
-                                double sx = s.Cells["PinX"].Result[Visio.VisUnitCodes.visCentimeters];
-                                double sy = s.Cells["PinY"].Result[Visio.VisUnitCodes.visCentimeters];
-                                double sangle = s.Cells["Angle"].Result[Visio.VisUnitCodes.visAngleUnits];
+                                ShapeInfo modelInfo = sManager.getShapeInfo(baseId);
+                                var modelPath = modelInfo.model.fileName;
 
-                                if (s.Master != null)
+                                if (modelPath != "")
                                 {
-                                    string baseId = s.Master.BaseID;
+                                    var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
 
-                                    ShapeInfo modelInfo = sManager.getShapeInfo(baseId);
-                                    var modelPath = modelInfo.model.fileName;
+                                    int handle = _engine.OpenTexturedObj(filePath + "." + Globals.ThisAddIn.defaultExtension,
+                                        filePath + "." + Globals.ThisAddIn.defaultExtension);
 
-                                    if (modelPath != "")
-                                    {
-                                        var filePath = System.IO.Path.Combine(Globals.ThisAddIn.RootPath, modelPath);
+                                    float scaleX = modelInfo.modelParams.scale.x;
+                                    float scaleY = modelInfo.modelParams.scale.y;
+                                    float scaleZ = modelInfo.modelParams.scale.z;
 
-                                        int handle = _engine.OpenTexturedObj(filePath + "." + Globals.ThisAddIn.defaultExtension,
-                                            filePath + "." + Globals.ThisAddIn.defaultExtension);
+                                    float rotX = modelInfo.modelParams.angle.x;
+                                    float rotY = modelInfo.modelParams.angle.y - (float)Math.PI * (float)(angle + sangle) / 180f;
+                                    float rotZ = modelInfo.modelParams.angle.z;
 
-                                        float scaleX = modelInfo.modelParams.scale.x;
-                                        float scaleY = modelInfo.modelParams.scale.y;
-                                        float scaleZ = modelInfo.modelParams.scale.z;
-
-                                        float rotX = modelInfo.modelParams.angle.x;
-                                        float rotY = modelInfo.modelParams.angle.y - (float)Math.PI * (float)(angle + sangle) / 180f;
-                                        float rotZ = modelInfo.modelParams.angle.z;
-
-                                        _engine.setRotate(rotX, rotY, rotZ, handle);
-                                        _engine.setScale(scaleX / 2, scaleY, scaleZ, handle);
-                                        _engine.setPostiion((float)(x + sx), 0.0f, (float)(y + sy), handle);
-                                    }
+                                    _engine.setRotate(rotX, rotY, rotZ, handle);
+                                    _engine.setScale(scaleX / 2, scaleY, scaleZ, handle);
+                                    _engine.setPostiion((float)(x + sx), 0.0f, (float)(y + sy), handle);
                                 }
                             }
                         }
                     }
                 }
-
-                */
             }
+
+            */
+        }
 
         private List<RenderModel> AnalyzePage(Visio.Shapes shapes, double pageWidth)
         {
@@ -424,7 +445,7 @@ namespace EventDraw
 
                 double modelheight = 0;
 
-
+                model.ID = shape.ID;
                 model.baseId = shape.Master.BaseID;
                 model.x = (float) pageWidth - (float) (x + sx);
                 model.y = (float) (y + sy);
@@ -457,11 +478,6 @@ namespace EventDraw
                 }
             }
         }
-        private void Render_panel_Load(object sender, EventArgs e)
-        {
-            //GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-            GL.ClearColor(Color.CornflowerBlue);
-        }
 
         private void Render_panel_Resize(object sender, EventArgs e)
         {
@@ -469,6 +485,8 @@ namespace EventDraw
 
             if (this.render_panel.ClientSize.Height == 0)
                 this.render_panel.ClientSize = new System.Drawing.Size(this.render_panel.ClientSize.Width, 1);
+            float aspectRatio = (float)this.render_panel.ClientSize.Width / (float)this.render_panel.ClientSize.Height;
+            _engine._camera.AspectRatio = aspectRatio;
             GL.Viewport(0, 0, this.render_panel.ClientSize.Width, this.render_panel.ClientSize.Height);
         }
 
@@ -561,6 +579,7 @@ namespace EventDraw
 
     class RenderModel
     {
+        public int ID;
         public string baseId;
         public string text;
         public float x;

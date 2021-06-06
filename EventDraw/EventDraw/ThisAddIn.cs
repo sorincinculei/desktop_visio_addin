@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 using Visio = Microsoft.Office.Interop.Visio;
+using EventDraw._3d;
 
 namespace EventDraw
 {
@@ -10,6 +11,7 @@ namespace EventDraw
     {
         public string RootPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\EventDraw";
         public string defaultExtension = "X";
+        private Engine _engine;
 
         private ShapeManager sManager;
 
@@ -28,7 +30,7 @@ namespace EventDraw
         /// 
         public void Render()
         {
-            Visio.Window window = this.Application.ActiveWindow.Windows.Add("3D Rendering111", Visio.VisWindowStates.visWSVisible);
+            Visio.Window window = this.Application.ActiveWindow.Windows.Add("EventDraw 3D Viewer", Visio.VisWindowStates.visWSVisible | Visio.VisWindowStates.visWSDockedRight, Visio.VisWinTypes.visAnchorBarAddon, 0, 0, 600);
             RenderDlg dlg = new RenderDlg(this.Application, this.sManager);
             dlg.Show();
             IntPtr ParenthWnd = new IntPtr(0);
@@ -42,6 +44,8 @@ namespace EventDraw
                 SetWindowLong(ParenthWnd, -16, 0x40000000 | 0x10000000);
                 SetParent(ParenthWnd, window.WindowHandle32);
             }
+
+            _engine = dlg.RenderEngine;
         }
         
         public void Setting()
@@ -175,9 +179,7 @@ namespace EventDraw
 
         private void Shape_Selected(Visio.Selection selction)
         {
-            var i = 0;
 
-            var j = 0;
         }
 
         private void Marker_Event(Visio.Application app, int SequenceNum, string ContextString)
@@ -187,7 +189,7 @@ namespace EventDraw
                 var selection = app.ActiveWindow.Selection;
                 if (selection.Count > 0)
                 {
-                    HeightDlg dlg = new HeightDlg(app, selection.PrimaryItem);
+                    HeightDlg dlg = new HeightDlg(app, selection.PrimaryItem, _engine);
                     dlg.Show();
                 }
             }
